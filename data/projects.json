@@ -1,0 +1,71 @@
+[
+  {
+    "slug": "personal-website",
+    "name": "Personal Website",
+    "description": "本网站本身：数据驱动的个人作品集，极光 + 星空 + 流星粒子化交互背景，React + TypeScript + Canvas 实现，零第三方动画库。",
+    "cover": "projects/personal-website/cover.svg",
+    "technologies": ["React", "TypeScript", "Vite", "Canvas 2D"],
+    "date": "2026-09",
+    "github": "",
+    "demo": "",
+    "status": "In Progress",
+    "tags": ["Web", "Canvas", "Portfolio"],
+    "details": {
+      "background": "想做一枚能够长期维护的个人站点，把简历、项目库、GitHub 和项目文档放在同一处。市面上的模板要么是通用简历风，要么动效廉价，因此决定从零实现一套“北极星 + 极光 + 流星”的夜空视觉系统。",
+      "goals": "1) 极简、深邃、克制的视觉气质；2) 所有项目由数据文件驱动，新增项目不改页面代码；3) 流星在鼠标靠近时粒子化并在鼠标离开后重新聚合，过渡连续；4) 桌面 / 平板 / 手机都能流畅运行，并尊重 prefers-reduced-motion。",
+      "features": [
+        "Canvas 单循环背景引擎：极光（1/4 分辨率离屏渲染）、星野、北极星呼吸光晕、流星系统共用一个 requestAnimationFrame",
+        "流星粒子化：流星按与鼠标的连续距离值溶解为粒子，鼠标离开后粒子受引导重新聚回流星头部",
+        "固定容量对象池管理粒子，无运行时对象 churn；帧时长 EMA 监测自动降级",
+        "数据驱动项目库：data/projects.json → 卡片网格 → 项目详情页 + 滚动联动大纲",
+        "hash 路由：构建产物为纯静态文件，可部署到任意静态服务器或子路径"
+      ],
+      "architecture": "src/background/ 下五个独立模块：pointer（指针状态）、particles（粒子池）、stars（星野与北极星）、aurora（极光离屏渲染）、meteors（流星状态机），由 engine.ts 统一驱动；UI 层组件只负责渲染与路由，不包含动画逻辑。",
+      "process": "先搭建数据结构与静态页面骨架，再按“极光 → 星野 → 北极星 → 流星 → 粒子化 → 鼠标交互 → 响应式与降级”的顺序逐层加入背景系统，每一步都在真实设备上验证帧率。",
+      "problems": [
+        {
+          "problem": "流星“隐藏→显示粒子→再显示流星”会跳变，观感断裂。",
+          "solution": "引入一个连续变量 frag（0=完整流星，1=完全粒子化）：流星头部透明度 = 1-frag，粒子生成速率 ∝ frag，鼠标离开后 frag 平滑回落、粒子被吸引回头部，全程无状态切换跳变。"
+        },
+        {
+          "problem": "每帧创建径向渐变与 RGBA 字符串产生大量垃圾，低端设备掉帧。",
+          "solution": "极光渲染到 1/4 分辨率离屏画布再放大（放大即自然模糊）；星星与粒子的颜色字符串预生成、透明度走 globalAlpha；粒子全部来自固定容量对象池。"
+        }
+      ],
+      "results": "一个可以长期演进的个人站点骨架：加一个项目 = 建目录 + 写一段 JSON；背景动画在桌面端稳定满帧，移动端自动降级。",
+      "screenshots": []
+    }
+  },
+  {
+    "slug": "plant-vs-zombies",
+    "name": "植物大战僵尸（复刻）",
+    "description": "基于 C++ 和 EasyX 的塔防游戏复刻：植物种植、僵尸波次、阳光经济与碰撞判定。示例条目 —— 请替换为你的真实项目信息。",
+    "cover": "projects/plant-vs-zombies/cover.svg",
+    "technologies": ["C++", "EasyX"],
+    "date": "2026-06",
+    "github": "",
+    "demo": "",
+    "status": "In Progress",
+    "tags": ["Game", "C++"],
+    "details": {
+      "background": "想检验 C++ 面向对象与游戏循环的实际运用，选择复刻经典塔防玩法：规则清晰、涉及资源管理、实体系统与碰撞检测，规模适合单人完成。",
+      "goals": "实现完整的“阳光 → 种植 → 防御 → 波次推进”循环；实体（植物 / 僵尸 / 子弹）用继承与多态组织；逻辑渲染分离，稳定 60 FPS。",
+      "features": [
+        "五类植物：向日葵、豌豆射手、坚果墙、寒冰射手、樱桃炸弹",
+        "僵尸波次系统：普通 / 路障 / 铁桶，波次间隔与数量随关卡推进",
+        "阳光经济：天降阳光 + 向日葵产出，种植消耗与冷却",
+        "碰撞与攻击判定：同行索敌、射速控制、僵尸啃食减速"
+      ],
+      "architecture": "Game 主循环驱动 Scene 场景状态机；Entity 基类派生 Plant / Zombie / Bullet / Sun 四族；Map 负责格子坐标换算，Collider 提供矩形相交检测；资源由 ImagePool 统一加载。",
+      "process": "先完成窗口、贴图加载与主循环，再实现单个实体（豌豆射手 → 普通僵尸）打通最小闭环，之后横向扩展实体种类，最后加入波次、UI 与音效。",
+      "problems": [
+        {
+          "problem": "多实体同时索敌时每帧两两比较，僵尸数量上百后帧率下降。",
+          "solution": "按行（lane）分桶：僵尸只与本行植物比较，子弹只与本行僵尸比较，复杂度从 O(n²) 降为 O(n)。"
+        }
+      ],
+      "results": "可完整游玩的塔防 Demo，单局 10–15 分钟，稳定 60 FPS；在此基础上计划加入存档与关卡编辑器。",
+      "screenshots": []
+    }
+  }
+]

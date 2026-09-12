@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a1226"/>
+      <stop offset="1" stop-color="#05070f"/>
+    </linearGradient>
+    <radialGradient id="aur1" cx=".28" cy=".1" r=".55">
+      <stop offset="0" stop-color="#3ee8b0" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#3ee8b0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="aur2" cx=".6" cy=".05" r=".5">
+      <stop offset="0" stop-color="#4fb8ff" stop-opacity=".3"/>
+      <stop offset="1" stop-color="#4fb8ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#bfe9ff" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#bfe9ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#sky)"/>
+  <rect width="800" height="450" fill="url(#aur1)"/>
+  <rect width="800" height="450" fill="url(#aur2)"/>
+  <g fill="#cfe3ff">
+    <circle cx="60" cy="80" r="1"/><circle cx="150" cy="200" r="1.2"/><circle cx="240" cy="60" r=".8"/>
+    <circle cx="330" cy="150" r="1"/><circle cx="430" cy="90" r="1.3"/><circle cx="520" cy="210" r=".9"/>
+    <circle cx="610" cy="120" r="1.1"/><circle cx="700" cy="240" r="1"/><circle cx="760" cy="70" r="1.2"/>
+    <circle cx="110" cy="320" r=".9"/><circle cx="280" cy="300" r="1.1"/><circle cx="640" cy="330" r=".8"/>
+    <circle cx="480" cy="380" r="1"/><circle cx="90" cy="410" r="1.1"/><circle cx="730" cy="400" r=".9"/>
+  </g>
+  <circle cx="640" cy="92" r="26" fill="url(#glow)" opacity=".5"/>
+  <circle cx="640" cy="92" r="2.4" fill="#ffffff"/>
+  <path d="M80 330 L220 300" stroke="#dceeff" stroke-opacity=".55" stroke-width="1.4" stroke-linecap="round"/>
+  <circle cx="220" cy="300" r="1.6" fill="#dceeff"/>
+  <text x="48" y="196" font-family="Consolas, monospace" font-size="15" fill="#5eead4" letter-spacing="4">~/portfolio</text>
+  <text x="46" y="248" font-family="Segoe UI, sans-serif" font-size="40" font-weight="700" fill="#e8eef7">Personal Website</text>
+  <text x="48" y="282" font-family="Segoe UI, sans-serif" font-size="16" fill="#8b98ad">React · TypeScript · Vite · Canvas 2D</text>
+</svg>
