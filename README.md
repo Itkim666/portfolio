@@ -16,6 +16,32 @@ npm run preview   # 本地预览构建产物（输入地址即可访问）
 构建产物是**纯静态 HTML/JS/CSS**（hash 路由 + 相对路径），可部署到 GitHub Pages、
 Netlify、Vercel 或任意静态服务器的任意子路径。
 
+## 在线地址
+
+**https://itkim666.github.io/portfolio/** — 由 GitHub Pages 托管，永久有效、电脑无需开机。
+
+## 如何更新线上网站
+
+改完代码后推送即可，GitHub 会自动构建并发布（约 1 分钟）：
+
+```bash
+git add -A
+git commit -m "更新说明"
+git push
+```
+
+推送后在仓库 **Actions** 标签可查看部署进度，变绿即上线。
+
+> 本仓库的 git 配置了本地代理（`git config --local http.proxy`），因为直连 github.com 不通。
+> 如果以后换代理端口，同步更新：`git config --local http.proxy http://127.0.0.1:新端口`
+
+### 首次部署时踩过的坑（备查）
+
+GitHub Pages 必须在 `Settings → Pages → Source` 里**手动选一次 "GitHub Actions"**。
+不选的话，工作流里的 `configure-pages` 会报
+`HttpError: Resource not accessible by integration`——因为默认令牌无权首次创建 Pages 站点。
+这是 GitHub 的硬性要求，只能手动点一次，之后所有部署都全自动。
+
 ## 目录结构
 
 ```
