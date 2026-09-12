@@ -8,16 +8,20 @@ interface BgConfig {
   stars: number
   particles: number
   meteors: number
-  spawnEvery: [number, number]
+  meanGap: number // 流星平均生成间隔（秒），越小越密
   dust: number
 }
 
-const HIGH: BgConfig = { stars: 220, particles: 700, meteors: 3, spawnEvery: [4, 11], dust: 34 }
-const LOW: BgConfig = { stars: 110, particles: 260, meteors: 1, spawnEvery: [9, 20], dust: 14 }
-const STATIC: BgConfig = { stars: 160, particles: 0, meteors: 0, spawnEvery: [999, 999], dust: 0 }
+// 流星：并发最多 4 颗。meanGap 按实测反推 —— 流星飞出屏幕即回收，
+// 在屏寿命仅 1.5–2s，因此间隔取 1.1s 才能维持“平时 2–3 颗、偶尔满 4 颗”
+const HIGH: BgConfig = { stars: 460, particles: 900, meteors: 4, meanGap: 1.1, dust: 40 }
+const LOW: BgConfig = { stars: 240, particles: 340, meteors: 2, meanGap: 2.6, dust: 16 }
+const STATIC: BgConfig = { stars: 220, particles: 0, meteors: 0, meanGap: 999, dust: 0 }
 
 export interface EngineHandle {
   destroy(): void
+  /** 仅用于开发期调试背景参数与实测，生产构建不会挂载 */
+  debug(): Record<string, unknown>
 }
 
 // 背景总控：一个 <canvas>、一个 requestAnimationFrame 循环，按模块分发更新。
@@ -25,16 +29,17 @@ export interface EngineHandle {
 export function createBackgroundEngine(canvas: HTMLCanvasElement): EngineHandle {
   const ctx = canvas.getContext('2d')!
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
-  const coarse = matchMedia('(pointer: coarse)').matches
-  const smallScreen = Math.min(innerWidth, innerHeight) < 820
-  let cfg: BgConfig = reduced ? STATIC : coarse && smallScreen ? LOW : HIGH
+  // 触屏设备（手机 + 平板）或小窗口一律降档：触屏没有鼠标交互，且性能与可视面积都更受限
+  const touch = matchMedia('(pointer: coarse)').matches
+  const lowPower = touch || Math.min(innerWidth, innerHeight) < 700
+  let cfg: BgConfig = reduced ? STATIC : lowPower ? LOW : HIGH
 
   let w = 0, h = 0
   const dpr = Math.min(devicePixelRatio || 1, 2) // DPR 上限 2：4K 屏不做无谓的超采样
   const pool = new ParticlePool(Math.max(cfg.particles, 64))
   const stars = new StarField(cfg.stars)
   const aurora = new Aurora()
-  const meteors = new MeteorSystem(cfg.meteors, cfg.spawnEvery)
+  const meteors = new MeteorSystem(cfg.meteors, cfg.meanGap)
   let dustTimer = 0
   let raf = 0
   let last = 0
@@ -53,6 +58,7 @@ export function createBackgroundEngine(canvas: HTMLCanvasElement): EngineHandle 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     aurora.resize(w, h)
     meteors.resize(w, h)
+    stars.resize(w, h)
     bgGrad = ctx.createLinearGradient(0, 0, 0, h)
     bgGrad.addColorStop(0, '#04060d')
     bgGrad.addColorStop(0.55, '#0a1020')
@@ -89,7 +95,7 @@ export function createBackgroundEngine(canvas: HTMLCanvasElement): EngineHandle 
       cfg = LOW
       stars.trim(LOW.stars)
       pool.cap = LOW.particles
-      meteors.setConfig(LOW.meteors, LOW.spawnEvery)
+      meteors.setConfig(LOW.meteors, LOW.meanGap)
     }
   }
 
@@ -122,6 +128,26 @@ export function createBackgroundEngine(canvas: HTMLCanvasElement): EngineHandle 
 
   resize()
   const detachPointer = attachPointer()
+
+  // 点击交互：命中流星 → 爆散；否则命中普通星星 → 轻微粒子反馈。
+  // 画布 pointer-events:none，所以点击落在页面内容上；这里排除可交互元素，
+  // 避免点击链接/按钮时误触发背景特效。
+  const onPointerDown = (e: PointerEvent) => {
+    const el = e.target as Element | null
+    if (el && el.closest('a, button, input, textarea, select, [role="button"]')) return
+    if (reduced) return
+    const x = e.clientX, y = e.clientY
+    if (meteors.handleClick(x, y, pool)) return
+    const hit = stars.hitTest(x, y, 26)
+    if (hit) {
+      pool.burst(hit.x, hit.y, 8 + ((Math.random() * 8) | 0), {
+        speedMin: 20, speedMax: 130, sizeMax: 1.1, lifeMin: 0.45, lifeMax: 0.95,
+        colors: ['#dceeff', '#bfe4ff', '#8ff0d8', '#ffffff'],
+      })
+    }
+  }
+  window.addEventListener('pointerdown', onPointerDown)
+
   const onResize = () => resize()
   const onVis = () => {
     if (document.hidden) {
@@ -147,8 +173,25 @@ export function createBackgroundEngine(canvas: HTMLCanvasElement): EngineHandle 
     destroy() {
       cancelAnimationFrame(raf)
       detachPointer()
+      window.removeEventListener('pointerdown', onPointerDown)
       window.removeEventListener('resize', onResize)
       document.removeEventListener('visibilitychange', onVis)
+    },
+    debug() {
+      const s = meteors.states
+      return {
+        meteorsActive: meteors.activeCount,
+        meteorsMax: cfg.meteors,
+        meteorsFlying: s.flying,
+        meteorsBurst: s.burst,
+        meteorsRegather: s.regather,
+        stars: stars.count,
+        particles: pool.active,
+        particleCap: pool.cap,
+        fpsEma: +(1 / emaDt).toFixed(1),
+        degraded: degraded ? 1 : 0,
+        heads: meteors.heads(),
+      }
     },
   }
 }

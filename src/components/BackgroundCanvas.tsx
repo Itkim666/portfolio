@@ -8,6 +8,10 @@ export default function BackgroundCanvas() {
   useEffect(() => {
     if (!ref.current) return
     const engine = createBackgroundEngine(ref.current)
+    // 开发期调试句柄：生产构建下 import.meta.env.DEV 为 false，不会挂载
+    if (import.meta.env.DEV) {
+      ;(window as unknown as { __bg?: unknown }).__bg = engine
+    }
     return () => engine.destroy()
   }, [])
 
