@@ -27,6 +27,9 @@ jobs:
       - run: npm ci
       - run: npm run build
       - uses: actions/configure-pages@v5
+        with:
+          # 自动启用仓库的 Pages（省去手动到 Settings 里设置的步骤）
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
