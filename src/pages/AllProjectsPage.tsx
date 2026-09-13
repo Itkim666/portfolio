@@ -15,11 +15,9 @@ export default function AllProjectsPage() {
       <main>
         <section id="all-projects" className="section all-projects-page">
           <div className="container">
-            {/* 返回首页：左上角，醒目样式。定位到首页 Projects 区块（与导航栏 Projects 落点一致） */}
-            <a className="all-back" href="#projects">
-              <span className="all-back-arrow" aria-hidden="true">←</span>
-              返回首页
-            </a>
+            {/* Back to Home：左上角，醒目样式。与项目详情页的返回入口同款，
+                回到首页 Projects 区域（与导航栏 Projects 落点一致） */}
+            <a className="all-back" href="#/home">Back to Home</a>
             <p className="sec-tag mono">03 / PROJECTS</p>
             <h2 className="sec-title">全部项目</h2>
             <p className="sec-desc">

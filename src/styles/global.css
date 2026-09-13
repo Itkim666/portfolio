@@ -415,9 +415,8 @@ button { font-family: inherit; cursor: pointer; }
 .all-back {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
   margin-bottom: 26px;
-  padding: 11px 24px 11px 20px;
+  padding: 11px 24px;
   border-radius: 999px;
   border: 1px solid rgba(94, 234, 212, 0.45);
   background: rgba(94, 234, 212, 0.1);
@@ -429,11 +428,6 @@ button { font-family: inherit; cursor: pointer; }
 }
 /* 本页没有 Hero，内容直接顶到页面顶部，需让出固定导航栏的高度 */
 .all-projects-page { padding-top: calc(var(--nav-h) + 46px); }
-.all-back-arrow {
-  font-size: 20px;
-  line-height: 1;
-  transition: transform 0.25s;
-}
 .all-back:hover {
   background: rgba(94, 234, 212, 0.18);
   border-color: rgba(94, 234, 212, 0.75);
@@ -441,7 +435,6 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--acc);
   transform: translateY(-1px);
 }
-.all-back:hover .all-back-arrow { transform: translateX(-3px); }
 
 .pcard {
   position: relative;
