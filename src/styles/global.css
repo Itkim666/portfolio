@@ -356,6 +356,64 @@ button { font-family: inherit; cursor: pointer; }
   gap: 24px;
 }
 
+/* 卡片行包裹层：给“全部项目”按钮提供定位参照 */
+.pgrid-wrap { position: relative; }
+
+/* “全部项目”入口：三个横向点，位于卡片行右侧、与卡片垂直居中。
+   宽屏时落在容器右侧的间隔区（与参考图红框位置一致） */
+.more-dots {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 16px;
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+}
+.more-dots span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: background 0.25s;
+}
+.more-dots:hover {
+  border-color: rgba(125, 211, 252, 0.5);
+  box-shadow: 0 0 18px rgba(125, 211, 252, 0.16);
+  transform: translateY(-50%) translateX(2px);
+}
+.more-dots:hover span { background: var(--acc2); }
+
+/* 没有右侧间隔空间时退回为常规按钮，避免被裁掉或溢出 */
+@media (max-width: 1280px) {
+  .more-dots {
+    position: static;
+    transform: none;
+    width: auto;
+    height: auto;
+    margin: 20px 0 0 auto;
+    padding: 7px 18px;
+    border-radius: 999px;
+  }
+  .more-dots:hover { transform: translateY(-1px); }
+}
+
+.all-projects-foot {
+  margin-top: 34px;
+  padding-top: 26px;
+  border-top: 1px solid var(--line);
+}
+
 .pcard {
   position: relative;
   overflow: hidden;

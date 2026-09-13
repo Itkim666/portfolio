@@ -1,0 +1,35 @@
+import Navbar from '../components/Navbar'
+import Section from '../components/Section'
+import ProjectCard from '../components/ProjectCard'
+import { projects } from '../data/projects'
+
+// 全部项目页：展示 projects.json 中的每一个项目。
+// 数据驱动 —— 以后在 data/projects.json 中新增一条，这里与首页会同时自动出现，
+// 不需要改这个文件的任何代码。
+export default function AllProjectsPage() {
+  const all = projects
+  const completed = all.filter((p) => p.status === 'Completed').length
+
+  return (
+    <>
+      <Navbar active="projects" />
+      <main>
+        <Section id="all-projects" index="03" tag="PROJECTS" title="全部项目">
+          <p className="sec-desc">
+            共 <span className="mono">{all.length}</span> 个项目
+            {completed > 0 && <>（已完成 <span className="mono">{completed}</span>）</>}
+            　·　数据来自 <span className="mono">data/projects.json</span>，新增项目自动出现。
+          </p>
+          <div className="project-grid">
+            {all.map((p) => (
+              <ProjectCard key={p.slug} project={p} />
+            ))}
+          </div>
+          <p className="all-projects-foot">
+            <a className="btn ghost" href="#projects">← 返回首页</a>
+          </p>
+        </Section>
+      </main>
+    </>
+  )
+}
