@@ -13,10 +13,13 @@ export default function AllProjectsPage() {
     <>
       <Navbar active="projects" />
       <main>
-        <section id="all-projects" className="section">
+        <section id="all-projects" className="section all-projects-page">
           <div className="container">
-            {/* 返回首页：左上角。目标为首页 Projects 区块，返回后直接落在那一段 */}
-            <a className="pd-back mono all-back" href="#projects">← 返回首页</a>
+            {/* 返回首页：左上角，醒目样式。定位到首页 Projects 画廊，图片完整入镜 */}
+            <a className="all-back" href="#projects-gallery">
+              <span className="all-back-arrow" aria-hidden="true">←</span>
+              返回首页
+            </a>
             <p className="sec-tag mono">03 / PROJECTS</p>
             <h2 className="sec-title">全部项目</h2>
             <p className="sec-desc">

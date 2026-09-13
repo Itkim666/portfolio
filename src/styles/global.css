@@ -68,6 +68,8 @@ button { font-family: inherit; cursor: pointer; }
 #root { position: relative; }
 
 [id] { scroll-margin-top: 84px; }
+/* 返回首页的定位点：紧贴导航栏下方，让项目卡片（含封面）完整入镜 */
+#projects-gallery { scroll-margin-top: 76px; }
 
 /* ---------- 通用元件 ---------- */
 .glass {
@@ -408,11 +410,37 @@ button { font-family: inherit; cursor: pointer; }
   .more-dots:hover { transform: translateY(-1px); }
 }
 
-/* 全部项目页：左上角返回首页链接 */
+/* 全部项目页：左上角返回首页 —— 醒目样式，一眼可见 */
 .all-back {
-  display: inline-block;
-  margin-bottom: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 26px;
+  padding: 11px 24px 11px 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(94, 234, 212, 0.45);
+  background: rgba(94, 234, 212, 0.1);
+  color: var(--acc);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: background 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.25s;
 }
+/* 本页没有 Hero，内容直接顶到页面顶部，需让出固定导航栏的高度 */
+.all-projects-page { padding-top: calc(var(--nav-h) + 46px); }
+.all-back-arrow {
+  font-size: 20px;
+  line-height: 1;
+  transition: transform 0.25s;
+}
+.all-back:hover {
+  background: rgba(94, 234, 212, 0.18);
+  border-color: rgba(94, 234, 212, 0.75);
+  box-shadow: 0 0 22px rgba(94, 234, 212, 0.22);
+  color: var(--acc);
+  transform: translateY(-1px);
+}
+.all-back:hover .all-back-arrow { transform: translateX(-3px); }
 
 .pcard {
   position: relative;
