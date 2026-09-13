@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
 import { site } from '../data/site'
 
+// Skills/About/Contact 保持首页锚点行为；Projects 指向独立页面（hash 路由切换，不新开标签页）
 const LINKS = [
-  { href: '#top', label: 'Home' },
-  { href: '#about', label: 'About' },
-  { href: '#skills', label: 'Skills' },
-  { href: '#projects', label: 'Projects' },
-  { href: '#github', label: 'GitHub' },
-  { href: '#contact', label: 'Contact' },
+  { href: '#top', id: 'top', label: 'Home' },
+  { href: '#about', id: 'about', label: 'About' },
+  { href: '#skills', id: 'skills', label: 'Skills' },
+  { href: '#/projects', id: 'projects', label: 'Projects' },
+  { href: '#github', id: 'github', label: 'GitHub' },
+  { href: '#contact', id: 'contact', label: 'Contact' },
 ]
 
 export default function Navbar({ active }: { active: string }) {
@@ -39,7 +40,7 @@ export default function Navbar({ active }: { active: string }) {
             <a
               key={l.href}
               href={l.href}
-              className={active === l.href.slice(1) ? 'on' : ''}
+              className={active === l.id ? 'on' : ''}
               onClick={() => setOpen(false)}
             >
               {l.label}
