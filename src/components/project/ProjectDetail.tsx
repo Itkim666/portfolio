@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { getProject } from '../../data/projects'
 import { site } from '../../data/site'
 import { useScrollSpy } from '../../hooks/useScrollSpy'
+import { markReturn } from '../../utils/scrollMemory'
 import GitHubIcon from '../GitHubIcon'
 import ProjectOutline, { scrollToSection, buildOutline } from './ProjectOutline'
 
@@ -16,7 +17,8 @@ export default function ProjectDetail({ slug }: { slug: string }) {
         <p className="mono sec-tag">404 / PROJECT</p>
         <h1>Project not found</h1>
         <p className="contact-line">这个项目还不存在，或者链接写错了。</p>
-        <a className="btn primary" href="#/">← Back to Home</a>
+        {/* 返回入口与全部项目页保持一致：内容区左上角的醒目胶囊 */}
+        <a className="all-back" href="#/home" onClick={markReturn}>Back to Home</a>
       </div>
     )
   }
@@ -27,13 +29,14 @@ export default function ProjectDetail({ slug }: { slug: string }) {
   return (
     <>
       <header className="pd-topbar">
-        <a className="pd-back mono" href="#/">← Back to Home</a>
         <span className="pd-crumb mono">~/projects/{p.slug}</span>
       </header>
 
       <main className="container pd-wrap">
         <div className="pd-grid">
           <article className="pd-main">
+            {/* Back to Home：与全部项目页的返回入口同位同款。回到首页 Projects 区域并恢复位置 */}
+            <a className="all-back" href="#/home" onClick={markReturn}>Back to Home</a>
             <p className="sec-tag mono">PROJECT / {p.date}</p>
             <h1 className="pd-title">{p.name}</h1>
             <p className="pd-desc">{p.description}</p>

@@ -648,7 +648,8 @@ button { font-family: inherit; cursor: pointer; }
 }
 .pd-back { color: var(--muted); font-size: 13px; }
 .pd-back:hover { color: var(--acc); }
-.pd-crumb { color: var(--faint); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* 顶栏只剩面包屑时，保持其原有的右侧位置 */
+.pd-crumb { margin-left: auto; color: var(--faint); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .pd-wrap { padding-top: 70px; padding-bottom: 100px; }
 .pd-grid {

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { MouseEvent } from 'react'
 import type { Project } from '../types'
 import GitHubIcon from './GitHubIcon'
+import { rememberScrollFromCard } from '../utils/scrollMemory'
 
 // 卡片跟随鼠标的细微高光（--mx/--my 由 JS 写入，::before 消费）
 function trackGlow(e: MouseEvent<HTMLElement>) {
@@ -14,9 +15,19 @@ export default function ProjectCard({ project }: { project: Project }) {
   const [coverErr, setCoverErr] = useState(false)
   const p = project
 
+  // 在点击的那一刻记录位置：此时 DOM 还是列表页，
+  // 若等页面切到详情页再读 scrollY，浏览器已因内容高度变化夹紧过滚动值。
+  // 仅首页记录；从全部项目页进入时会清除，返回改为落到 Projects 区域。
+  const onClickCard = () => rememberScrollFromCard()
+
   return (
     <article className="pcard glass" onMouseMove={trackGlow}>
-      <a className="pcard-cover-link" href={`#/project/${p.slug}`} aria-label={`查看 ${p.name}`}>
+      <a
+        className="pcard-cover-link"
+        href={`#/project/${p.slug}`}
+        aria-label={`查看 ${p.name}`}
+        onClick={onClickCard}
+      >
         <div className="pcard-cover">
           {coverErr || !p.cover ? (
             <div className="cover-fallback"><span>{p.name[0]}</span></div>
@@ -28,7 +39,7 @@ export default function ProjectCard({ project }: { project: Project }) {
       <div className="pcard-body">
         <div className="pcard-head">
           <h3 className="pcard-name">
-            <a href={`#/project/${p.slug}`}>{p.name}</a>
+            <a href={`#/project/${p.slug}`} onClick={onClickCard}>{p.name}</a>
           </h3>
           <span className={`status status-${p.status.replace(/\s/g, '').toLowerCase()}`}>{p.status}</span>
         </div>

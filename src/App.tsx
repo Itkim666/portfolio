@@ -4,15 +4,23 @@ import HomePage from './pages/HomePage'
 import ProjectDetail from './components/project/ProjectDetail'
 import AllProjectsPage from './pages/AllProjectsPage'
 import { useHashRoute } from './hooks/useHashRoute'
-
+import { consumeReturn } from './utils/scrollMemory'
 // 瞬间滚动：临时覆盖 CSS 的 scroll-behavior: smooth，
 // 否则从别的页面返回首页时会看到“从顶部一路滑下来”。
-function jump(target?: HTMLElement | null) {
+// 统一用 window.scrollTo（显式算出目标偏移），比 scrollIntoView 更可控，
+// 也避免不同环境对 scrollIntoView 行为不一致。
+function jump(target?: HTMLElement | null, y?: number) {
   const html = document.documentElement
   const prev = html.style.scrollBehavior
   html.style.scrollBehavior = 'auto'
-  if (target) target.scrollIntoView({ block: 'start' })
-  else window.scrollTo(0, 0)
+  if (typeof y === 'number') {
+    window.scrollTo(0, y)
+  } else if (target) {
+    const margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0
+    window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY - margin)
+  } else {
+    window.scrollTo(0, 0)
+  }
   html.style.scrollBehavior = prev
 }
 
@@ -31,6 +39,16 @@ export default function App() {
       jump()
       return
     }
+
+    // Back to Home：回到首页 Projects 区域。
+    // 有进入项目前的位置就精确恢复；没有（如直接打开详情链）就落到 Projects 区块。
+    if (route.restore) {
+      const saved = consumeReturn()
+      if (saved !== null) jump(null, saved)
+      else jump(document.getElementById('projects'))
+      return
+    }
+
     if (!route.anchor || route.anchor === 'top') {
       if (isFirst || fromOtherPage) jump()
       return
