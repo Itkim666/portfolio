@@ -15,8 +15,8 @@ export default function AllProjectsPage() {
       <main>
         <section id="all-projects" className="section all-projects-page">
           <div className="container">
-            {/* 返回首页：左上角，醒目样式。定位到首页 Projects 画廊，图片完整入镜 */}
-            <a className="all-back" href="#projects-gallery">
+            {/* 返回首页：左上角，醒目样式。定位到首页 Projects 区块（与导航栏 Projects 落点一致） */}
+            <a className="all-back" href="#projects">
               <span className="all-back-arrow" aria-hidden="true">←</span>
               返回首页
             </a>

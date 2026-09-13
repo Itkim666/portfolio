@@ -68,8 +68,9 @@ button { font-family: inherit; cursor: pointer; }
 #root { position: relative; }
 
 [id] { scroll-margin-top: 84px; }
-/* 返回首页的定位点：紧贴导航栏下方，让项目卡片（含封面）完整入镜 */
-#projects-gallery { scroll-margin-top: 76px; }
+/* Projects 区块：点导航栏 Projects / 从全部项目页返回时，落到区块顶部，
+   区块标签紧贴导航栏下方（视口顶留出导航栏高度即可，标签在其下） */
+#projects { scroll-margin-top: 0; }
 
 /* ---------- 通用元件 ---------- */
 .glass {

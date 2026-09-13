@@ -8,8 +8,7 @@ export default function ProjectsSection() {
       <p className="sec-desc">
         项目由 <span className="mono">data/projects.json</span> 驱动，点击卡片查看完整技术文档。
       </p>
-      {/* id 供“返回首页”直接定位到画廊：落点跳过区段上方留白，让项目图片完整入镜 */}
-      <div className="pgrid-wrap" id="projects-gallery">
+      <div className="pgrid-wrap">
         <div className="project-grid">
           {projects.map((p) => (
             <ProjectCard key={p.slug} project={p} />
