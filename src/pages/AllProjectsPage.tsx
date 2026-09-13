@@ -1,5 +1,4 @@
 import Navbar from '../components/Navbar'
-import Section from '../components/Section'
 import ProjectCard from '../components/ProjectCard'
 import { projects } from '../data/projects'
 
@@ -14,21 +13,24 @@ export default function AllProjectsPage() {
     <>
       <Navbar active="projects" />
       <main>
-        <Section id="all-projects" index="03" tag="PROJECTS" title="全部项目">
-          <p className="sec-desc">
-            共 <span className="mono">{all.length}</span> 个项目
-            {completed > 0 && <>（已完成 <span className="mono">{completed}</span>）</>}
-            　·　数据来自 <span className="mono">data/projects.json</span>，新增项目自动出现。
-          </p>
-          <div className="project-grid">
-            {all.map((p) => (
-              <ProjectCard key={p.slug} project={p} />
-            ))}
+        <section id="all-projects" className="section">
+          <div className="container">
+            {/* 返回首页：左上角。目标为首页 Projects 区块，返回后直接落在那一段 */}
+            <a className="pd-back mono all-back" href="#projects">← 返回首页</a>
+            <p className="sec-tag mono">03 / PROJECTS</p>
+            <h2 className="sec-title">全部项目</h2>
+            <p className="sec-desc">
+              共 <span className="mono">{all.length}</span> 个项目
+              {completed > 0 && <>（已完成 <span className="mono">{completed}</span>）</>}
+              　·　数据来自 <span className="mono">data/projects.json</span>，新增项目自动出现。
+            </p>
+            <div className="project-grid">
+              {all.map((p) => (
+                <ProjectCard key={p.slug} project={p} />
+              ))}
+            </div>
           </div>
-          <p className="all-projects-foot">
-            <a className="btn ghost" href="#projects">← 返回首页</a>
-          </p>
-        </Section>
+        </section>
       </main>
     </>
   )
