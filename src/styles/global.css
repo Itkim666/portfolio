@@ -359,6 +359,9 @@ button { font-family: inherit; cursor: pointer; }
 .pcard {
   position: relative;
   overflow: hidden;
+  /* 纵向 flex：让底部标签行对齐（卡片高度由网格拉伸，内容多的卡片不再把底行顶低） */
+  display: flex;
+  flex-direction: column;
   transition: transform 0.35s, border-color 0.35s, box-shadow 0.35s;
 }
 /* 鼠标跟随高光 */
@@ -423,7 +426,7 @@ button { font-family: inherit; cursor: pointer; }
   font-family: var(--mono);
 }
 
-.pcard-body { padding: 20px 22px 18px; position: relative; z-index: 4; }
+.pcard-body { padding: 20px 22px 18px; position: relative; z-index: 4; display: flex; flex-direction: column; flex: 1 1 auto; }
 .pcard-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .pcard-name { font-size: 1.12rem; font-weight: 700; letter-spacing: -0.01em; }
 .pcard-name a { color: var(--text); }
@@ -438,9 +441,10 @@ button { font-family: inherit; cursor: pointer; }
   overflow: hidden;
   min-height: 49px;
 }
-.pcard-tech { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 7px; }
+.pcard-tech { margin-top: 14px; margin-bottom: 16px; display: flex; flex-wrap: wrap; gap: 7px; }
+/* margin-top:auto 把标签行推到卡片底部，保证所有卡片底部对齐 */
 .pcard-foot {
-  margin-top: 16px;
+  margin-top: auto;
   padding-top: 14px;
   border-top: 1px solid var(--line);
   display: flex;

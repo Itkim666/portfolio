@@ -69,11 +69,11 @@
     }
   },
   {
-    "slug": "itkim-web-design",
-    "name": "itkim-web-design",
+    "slug": "website-design",
+    "name": "website—design",
     "description": "可持续扩展的网站模板库 Skill：一个 Skill + 一个模板库，同时面向 Codex 与 ZCode 读取同一套文件，新增模板只需加目录并在索引登记一行。",
-    "cover": "projects/itkim-web-design/cover.svg",
-    "technologies": ["Markdown", "Python", "React", "TypeScript", "Vite"],
+    "cover": "projects/website-design/cover.svg",
+    "technologies": ["TypeScript", "Markdown", "Python", "React", "Vite"],
     "date": "2026-09",
     "github": "https://github.com/Itkim666/website-design",
     "demo": "",
