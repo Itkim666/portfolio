@@ -10,3 +10,9 @@ dist/
 # 本地便捷脚本（含本机路径，仅供本机使用）
 启动分享.bat
 停止分享.bat
+
+# 本地临时分析文件
+.anno.png
+.card3.png
+.chips3.png
+*.tmp.png
