@@ -42,7 +42,7 @@ export const skillGroups = [
 export const education = [
   {
     period: '2023 — Present',
-    title: '计算机科学与技术（本科在读）',
+    title: '计算机科学与技术',
     org: 'My University', // TODO: 替换为你的学校
     note: '主修数据结构、操作系统、计算机网络、数据库原理。',
   },
