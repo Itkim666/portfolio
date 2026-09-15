@@ -7,7 +7,19 @@ export default function Hero() {
       <div className="hero-inner">
         {/* 左：3D 玻璃悬浮头像（样式见 global.css 的 .hero-avatar） */}
         <div className="hero-avatar">
-          <img src={site.avatar} alt={`${site.name} 的头像`} />
+          <div className="hero-avatar-orbit" aria-hidden="true">
+            <span className="avatar-star star-a" />
+            <span className="avatar-star star-b" />
+            <span className="avatar-star star-c" />
+            <span className="avatar-star star-d" />
+            <span className="avatar-meteor meteor-a" />
+            <span className="avatar-meteor meteor-b" />
+            <span className="avatar-meteor meteor-c" />
+          </div>
+          <div className="hero-avatar-media">
+            <img src={site.avatar} alt={`${site.name} 的头像`} />
+          </div>
+          <div className="hero-avatar-glass" aria-hidden="true" />
         </div>
         {/* 右：个人介绍（文案未改动） */}
         <div className="hero-copy">

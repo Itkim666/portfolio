@@ -252,6 +252,7 @@ button { font-family: inherit; cursor: pointer; }
   position: relative;
   width: clamp(190px, 24vw, 264px);
   aspect-ratio: 1;
+  isolation: isolate;
   perspective: 800px; /* 让 img 的 rotate3d 有真实的透视 */
   animation: hero-float 7s ease-in-out infinite;
 }
@@ -280,11 +281,104 @@ button { font-family: inherit; cursor: pointer; }
 }
 .hero-avatar:hover::before { opacity: 1; }
 /* 玻璃盖板：给照片罩一层顶部高光与内阴影，产生玻璃质感 */
-.hero-avatar::after {
-  content: "";
+.hero-avatar-orbit,
+.hero-avatar-glass,
+.hero-avatar-media {
   position: absolute;
   inset: 0;
   border-radius: 50%;
+}
+.hero-avatar-orbit {
+  pointer-events: none;
+  z-index: 0;
+  animation: orbit-drift 18s linear infinite;
+}
+@keyframes orbit-drift {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.hero-avatar-orbit::before,
+.hero-avatar-orbit::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.hero-avatar-orbit::before {
+  inset: 4%;
+  border: 1px solid rgba(125, 211, 252, 0.2);
+  border-left-color: transparent;
+  border-bottom-color: rgba(94, 234, 212, 0.34);
+  transform: rotate(-28deg) scaleY(0.6);
+  filter: blur(0.2px);
+}
+.hero-avatar-orbit::after {
+  inset: -3%;
+  border: 1px solid rgba(167, 139, 250, 0.16);
+  border-top-color: transparent;
+  border-right-color: rgba(125, 211, 252, 0.25);
+  transform: rotate(32deg) scaleY(0.62);
+  filter: blur(0.35px);
+}
+.avatar-star,
+.avatar-meteor {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+}
+.avatar-star {
+  width: 4px;
+  height: 4px;
+  background: #d8fbff;
+  box-shadow: 0 0 8px 2px rgba(125, 211, 252, 0.72);
+  animation: star-twinkle 3.8s ease-in-out infinite;
+}
+.star-a { top: 8%; left: 26%; animation-delay: -1.2s; }
+.star-b { top: 20%; right: 4%; width: 3px; height: 3px; animation-delay: -2.8s; }
+.star-c { bottom: 11%; left: 13%; width: 3px; height: 3px; animation-delay: -0.4s; }
+.star-d { right: 16%; bottom: 18%; animation-delay: -2s; }
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.24; transform: scale(0.7); }
+  45% { opacity: 0.95; transform: scale(1.2); }
+}
+.avatar-meteor {
+  --meteor-angle: -34deg;
+  --meteor-x: -42px;
+  --meteor-y: 30px;
+  width: 54px;
+  height: 1px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(216, 251, 255, 0.9) 72%, #fff);
+  box-shadow: 0 0 7px rgba(125, 211, 252, 0.55);
+  opacity: 0;
+  transform: rotate(var(--meteor-angle));
+  transform-origin: right center;
+  animation: meteor-pass 8s ease-in-out infinite;
+}
+.meteor-a { top: 11%; right: -4%; animation-delay: -1.5s; }
+.meteor-b { top: 44%; left: -12%; width: 42px; --meteor-angle: 28deg; --meteor-x: 42px; animation-delay: -5.6s; }
+.meteor-c { bottom: 8%; right: 2%; width: 34px; --meteor-angle: -20deg; --meteor-x: -30px; --meteor-y: -26px; animation-delay: -7s; }
+@keyframes meteor-pass {
+  0%, 68%, 100% { opacity: 0; transform: translate(0, 0) rotate(var(--meteor-angle)) scaleX(0.55); }
+  72% { opacity: 0.68; }
+  82% { opacity: 0; transform: translate(var(--meteor-x), var(--meteor-y)) rotate(var(--meteor-angle)) scaleX(1); }
+}
+.hero-avatar-media {
+  inset: 8px;
+  overflow: hidden;
+  z-index: 1;
+  background: var(--bg2);
+  box-shadow:
+    0 0 0 1px rgba(148, 163, 184, 0.22),
+    0 0 0 7px rgba(10, 16, 32, 0.62),
+    0 0 0 8px rgba(94, 234, 212, 0.34),
+    0 24px 48px -14px rgba(2, 6, 16, 0.7),
+    0 36px 70px -24px rgba(94, 234, 212, 0.2);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s;
+  animation: rise 0.9s ease-out backwards;
+}
+.hero-avatar-glass {
+  z-index: 2;
   background:
     linear-gradient(155deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 38%, transparent 56%),
     radial-gradient(120% 80% at 50% -20%, rgba(232, 238, 247, 0.12), transparent 60%);
@@ -293,24 +387,18 @@ button { font-family: inherit; cursor: pointer; }
     inset 0 -14px 30px rgba(2, 6, 16, 0.35);
   pointer-events: none;
 }
-.hero-avatar img {
+.hero-avatar-media img {
   display: block;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  width: 120%;
+  height: 120%;
+  max-width: none;
+  left: -14%;
+  top: 3%;
   object-fit: cover;
-  border-radius: 50%;
-  /* 多层阴影：细描边 + 深色玻璃垫圈 + 极光环 + 纵深投影 + 彩色环境光 */
-  box-shadow:
-    0 0 0 1px rgba(148, 163, 184, 0.22),
-    0 0 0 7px rgba(10, 16, 32, 0.6),
-    0 0 0 8px rgba(94, 234, 212, 0.32),
-    0 24px 48px -14px rgba(2, 6, 16, 0.7),
-    0 36px 70px -24px rgba(94, 234, 212, 0.2);
-  /* backwards：入场结束后不做前向填充，把 transform 交还给悬停效果 */
-  animation: rise 0.9s ease-out backwards;
-  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s;
+  /* 以人物头脸为视觉中心，保留头顶与下巴的安全区 */
 }
-.hero-avatar:hover img {
+.hero-avatar:hover .hero-avatar-media {
   transform: translateY(-3px) rotate3d(1, -0.6, 0, 4deg) scale(1.02);
   box-shadow:
     0 0 0 1px rgba(148, 163, 184, 0.3),
