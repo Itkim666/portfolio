@@ -79,6 +79,8 @@ button { font-family: inherit; cursor: pointer; }
   border-radius: 14px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  /* 静置时的环境投影：玻璃卡片一开始就悬浮在背景之上（悬停时各卡片再自行加深） */
+  box-shadow: 0 14px 34px -18px rgba(2, 6, 16, 0.85);
 }
 
 .chip {
@@ -112,6 +114,8 @@ button { font-family: inherit; cursor: pointer; }
   background: rgba(94, 234, 212, 0.12);
   border-color: rgba(94, 234, 212, 0.4);
   color: var(--acc);
+  /* 静置时的柔光投影：让主按钮浮在页面之上，而不是贴在平面上 */
+  box-shadow: 0 8px 20px -12px rgba(94, 234, 212, 0.4);
 }
 .btn.primary:hover {
   background: rgba(94, 234, 212, 0.18);
@@ -232,13 +236,96 @@ button { font-family: inherit; cursor: pointer; }
   position: relative;
   padding: 0 28px;
 }
-.hero-inner { text-align: center; max-width: 760px; }
+/* 左头像 / 右介绍：两栏布局（窄屏在响应式小节退化为上下居中） */
+.hero-inner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: clamp(48px, 7vw, 88px);
+  width: 100%;
+  max-width: 980px;
+}
+.hero-copy { text-align: left; min-width: 0; }
+
+/* 头像：缓慢悬浮 + 背景光晕 + 玻璃高光 + 悬停轻微 3D 倾斜 */
+.hero-avatar {
+  position: relative;
+  width: clamp(190px, 24vw, 264px);
+  aspect-ratio: 1;
+  perspective: 800px; /* 让 img 的 rotate3d 有真实的透视 */
+  animation: hero-float 7s ease-in-out infinite;
+}
+@keyframes hero-float {
+  0%, 100% { transform: translateY(-5px); }
+  50% { transform: translateY(7px); }
+}
+/* 环境光晕：头像后方的彩色柔光，缓慢呼吸 */
+.hero-avatar::before {
+  content: "";
+  position: absolute;
+  inset: -18%;
+  border-radius: 50%;
+  background:
+    radial-gradient(closest-side, rgba(94, 234, 212, 0.42), transparent 72%),
+    radial-gradient(60% 60% at 68% 28%, rgba(125, 211, 252, 0.34), transparent 72%);
+  filter: blur(22px);
+  opacity: 0.85;
+  z-index: -1;
+  transition: opacity 0.5s;
+  animation: glow-breathe 7s ease-in-out infinite;
+}
+@keyframes glow-breathe {
+  0%, 100% { transform: scale(0.94); }
+  50% { transform: scale(1.1); }
+}
+.hero-avatar:hover::before { opacity: 1; }
+/* 玻璃盖板：给照片罩一层顶部高光与内阴影，产生玻璃质感 */
+.hero-avatar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 38%, transparent 56%),
+    radial-gradient(120% 80% at 50% -20%, rgba(232, 238, 247, 0.12), transparent 60%);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.25),
+    inset 0 -14px 30px rgba(2, 6, 16, 0.35);
+  pointer-events: none;
+}
+.hero-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  /* 多层阴影：细描边 + 深色玻璃垫圈 + 极光环 + 纵深投影 + 彩色环境光 */
+  box-shadow:
+    0 0 0 1px rgba(148, 163, 184, 0.22),
+    0 0 0 7px rgba(10, 16, 32, 0.6),
+    0 0 0 8px rgba(94, 234, 212, 0.32),
+    0 24px 48px -14px rgba(2, 6, 16, 0.7),
+    0 36px 70px -24px rgba(94, 234, 212, 0.2);
+  /* backwards：入场结束后不做前向填充，把 transform 交还给悬停效果 */
+  animation: rise 0.9s ease-out backwards;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s;
+}
+.hero-avatar:hover img {
+  transform: translateY(-3px) rotate3d(1, -0.6, 0, 4deg) scale(1.02);
+  box-shadow:
+    0 0 0 1px rgba(148, 163, 184, 0.3),
+    0 0 0 7px rgba(10, 16, 32, 0.65),
+    0 0 0 8px rgba(94, 234, 212, 0.5),
+    0 30px 56px -14px rgba(2, 6, 16, 0.75),
+    0 44px 84px -24px rgba(94, 234, 212, 0.3);
+}
 
 .hero-title {
   font-size: clamp(2.5rem, 6.5vw, 4.3rem);
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.15;
+  text-shadow: 0 3px 26px rgba(94, 234, 212, 0.13);
   animation: rise 0.9s ease-out both;
 }
 .grad {
@@ -259,15 +346,15 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--muted);
   font-size: 1.02rem;
   max-width: 560px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: 0;
+  margin-right: 0;
   animation: rise 0.9s 0.2s ease-out both;
 }
 .hero-cta {
   margin-top: 40px;
   display: flex;
   gap: 14px;
-  justify-content: center;
+  justify-content: flex-start;
   flex-wrap: wrap;
   animation: rise 0.9s 0.3s ease-out both;
 }
@@ -306,6 +393,7 @@ button { font-family: inherit; cursor: pointer; }
   font-weight: 700;
   letter-spacing: -0.01em;
   margin-bottom: 38px;
+  text-shadow: 0 2px 20px rgba(125, 211, 252, 0.1);
 }
 .sec-desc { color: var(--muted); margin: -24px 0 34px; font-size: 15px; }
 
@@ -799,6 +887,11 @@ button { font-family: inherit; cursor: pointer; }
   .burger { display: flex; }
 
   .section { padding: 80px 0; }
+  /* Hero 退化为单栏：头像居上居中，文字恢复居中排版 */
+  .hero-inner { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 44px; }
+  .hero-copy { text-align: center; }
+  .hero-tag { margin-left: auto; margin-right: auto; }
+  .hero-cta { justify-content: center; }
   .about-grid { grid-template-columns: 1fr; gap: 28px; }
   .skill-grid { grid-template-columns: 1fr; }
   /* minmax(0,1fr)：默认 1fr 的 auto 最小值会被长内容撑破容器导致横向溢出 */

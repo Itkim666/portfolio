@@ -3,6 +3,8 @@ export const site = {
   name: 'Itkim',
   role: 'Computer Science / Computer Application',
   tagline: 'I enjoy turning ideas into small, solid software — games, tools and web experiments.',
+  // 首页 Hero 左侧头像（放在 public/img/ 下，替换同名文件即可换头像）
+  avatar: 'img/avatar.jpg',
   github: 'https://github.com/Itkim666',
   githubUser: 'Itkim666',
   // 填入邮箱后 Contact 区会自动显示；留空则整个条目隐藏（优雅降级）
