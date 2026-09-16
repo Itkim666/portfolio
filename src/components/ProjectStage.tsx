@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import type { PointerEvent as ReactPointerEvent } from 'react'
+import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from 'react'
 import type { Project } from '../types'
 import { rememberScrollFromCard } from '../utils/scrollMemory'
+import { startProjectTransition } from '../utils/projectTransition'
 
 type StagePhase = 'idle' | 'stacked' | 'unfolding' | 'orbit'
 
@@ -11,6 +12,8 @@ interface Props {
 
 const TAU = Math.PI * 2
 const ORBIT_SECONDS = 42
+const GALAXY_TONES = ['cyan', 'indigo', 'violet', 'amber'] as const
+const GALAXY_POSITIONS = ['upper-right', 'lower-left', 'upper-left', 'lower-right'] as const
 
 function clamp(value: number, min = 0, max = 1) {
   return Math.min(max, Math.max(min, value))
@@ -29,11 +32,13 @@ export default function ProjectStage({ projects }: Props) {
   const phaseRef = useRef<StagePhase>('idle')
   const unfoldStartedAt = useRef(0)
   const hoverRef = useRef<number | null>(null)
+  const transitioningRef = useRef<number | null>(null)
   const hoverStrength = useRef<number[]>([])
   const pointer = useRef({ targetX: 0, targetY: 0, currentX: 0, currentY: 0 })
   const [phase, setPhase] = useState<StagePhase>('idle')
   const [entered, setEntered] = useState(false)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [transitioningIndex, setTransitioningIndex] = useState<number | null>(null)
   const [coverErrors, setCoverErrors] = useState<Record<string, boolean>>({})
 
   const setStagePhase = (next: StagePhase) => {
@@ -97,8 +102,8 @@ export default function ProjectStage({ projects }: Props) {
 
     const drawCard = (card: HTMLAnchorElement, index: number, unfold: number) => {
       const angle = (index / projects.length) * TAU + (orbitElapsed / (ORBIT_SECONDS * 1000)) * TAU
-      const orbitX = Math.sin(angle) * 332
-      const orbitY = (1 - Math.cos(angle)) * 58
+      const orbitX = Math.sin(angle) * 372
+      const orbitY = (1 - Math.cos(angle)) * 54
       const orbitDepth = Math.cos(angle)
       const orbitZ = orbitDepth * 166
       const orbitScale = 0.68 + ((orbitDepth + 1) / 2) * 0.25
@@ -117,6 +122,8 @@ export default function ProjectStage({ projects }: Props) {
       hoverStrength.current[index] += (hoverTarget - hoverStrength.current[index]) * 0.095
       const hover = hoverStrength.current[index]
       const isBackgroundCard = hoverRef.current !== null && hoverRef.current !== index
+      const isTransitioning = transitioningRef.current !== null
+      const isOpening = transitioningRef.current === index
       const x = stackX + (orbitX - stackX) * reveal
       const y = stackY + (orbitY - stackY) * reveal - hover * 10
       const z = stackZ + (orbitZ - stackZ) * reveal + hover * 64
@@ -126,7 +133,7 @@ export default function ProjectStage({ projects }: Props) {
       const rotation = stackRotation + (orbitRotation - stackRotation) * reveal
 
       card.style.transform = `translate(-50%, -50%) translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, ${z.toFixed(2)}px) scale(${scale.toFixed(3)}) rotateY(${rotation.toFixed(2)}deg)`
-      card.style.opacity = String(clamp(opacity * (isBackgroundCard ? 0.84 : 1), 0.42, 1))
+      card.style.opacity = String(clamp(opacity * (isTransitioning ? (isOpening ? 0 : 0.16) : isBackgroundCard ? 0.84 : 1), 0, 1))
       card.style.filter = `blur(${blur.toFixed(2)}px) saturate(${(0.82 + reveal * 0.18 + hover * 0.08).toFixed(2)}) brightness(${isBackgroundCard ? 0.84 : 1})`
       card.style.zIndex = String(Math.round((orbitDepth + 1) * 100 + hover * 100))
       card.style.setProperty('--orbital-depth', String((orbitDepth + 1) / 2))
@@ -154,8 +161,9 @@ export default function ProjectStage({ projects }: Props) {
           orbitVelocity = 0
           orbitElapsed = 0
         } else {
-          const velocityTarget = hoverRef.current === null ? 1 : 0.035
-          orbitVelocity += (velocityTarget - orbitVelocity) * 0.028
+          // Hover 时只进入电影式慢动作，永远不让轨道停住。
+          const velocityTarget = hoverRef.current === null ? 1 : 0.14
+          orbitVelocity += (velocityTarget - orbitVelocity) * 0.035
           orbitElapsed += delta * orbitVelocity
         }
         unfold = 1
@@ -193,12 +201,33 @@ export default function ProjectStage({ projects }: Props) {
     updateHovered(null)
   }
 
+  const openProject = (event: ReactMouseEvent<HTMLAnchorElement>, project: Project, index: number) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+    event.preventDefault()
+    const card = cardRefs.current[index]
+    if (!card) return
+
+    rememberScrollFromCard()
+    transitioningRef.current = index
+    setTransitioningIndex(index)
+    updateHovered(null)
+    const started = startProjectTransition({
+      source: card,
+      cover: project.cover,
+      onNavigate: () => { window.location.hash = `/project/${project.slug}` },
+    })
+    if (!started) {
+      transitioningRef.current = null
+      setTransitioningIndex(null)
+    }
+  }
+
   if (projects.length === 0) return null
 
   return (
     <div
       ref={stageRef}
-      className={`project-stage is-${phase}${entered ? ' is-entered' : ''}`}
+      className={`project-stage is-${phase}${entered ? ' is-entered' : ''}${transitioningIndex !== null ? ' is-transitioning' : ''}`}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
     >
@@ -209,17 +238,22 @@ export default function ProjectStage({ projects }: Props) {
           {projects.map((project, index) => {
             const hasCoverError = coverErrors[project.slug]
             const isHovered = hoveredIndex === index
+            const galaxyTone = GALAXY_TONES[index % GALAXY_TONES.length]
+            const galaxyPosition = GALAXY_POSITIONS[index % GALAXY_POSITIONS.length]
 
             return (
               <a
                 key={project.slug}
                 ref={(node) => { cardRefs.current[index] = node }}
-                className={`stage-card${isHovered ? ' is-hovered' : ''}`}
+                className={`stage-card stage-card--galaxy-${galaxyPosition}${isHovered ? ' is-hovered' : ''}${transitioningIndex === index ? ' is-opening' : ''}`}
                 href={`#/project/${project.slug}`}
                 aria-label={`查看 ${project.name}`}
-                onClick={rememberScrollFromCard}
+                data-tone={galaxyTone}
+                onClick={(event) => openProject(event, project, index)}
                 onMouseEnter={() => updateHovered(index)}
                 onMouseLeave={() => updateHovered(null)}
+                onFocus={() => updateHovered(index)}
+                onBlur={() => updateHovered(null)}
               >
                 <div className="stage-card__cover">
                   {hasCoverError || !project.cover ? (
@@ -233,6 +267,11 @@ export default function ProjectStage({ projects }: Props) {
                     />
                   )}
                   <span className="stage-card__cover-glow" aria-hidden="true" />
+                  <span className="stage-card__galaxy" aria-hidden="true">
+                    <span className="stage-card__galaxy-core" />
+                    <span className="stage-card__galaxy-ring" />
+                    <span className="stage-card__galaxy-stars" />
+                  </span>
                   <span className="stage-card__hint mono" aria-hidden="true">VIEW PROJECT ↗</span>
                 </div>
                 <div className="stage-card__body">
