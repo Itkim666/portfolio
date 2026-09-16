@@ -931,7 +931,7 @@ button { font-family: inherit; cursor: pointer; }
 .stage-card__cover img { transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1), filter 0.55s; }
 .stage-card.is-hovered .stage-card__cover img,
 .stage-card:focus-visible .stage-card__cover img {
-  transform: scale(1.055) translateY(-2px);
+  transform: scale(1.018) translateY(-1px);
   filter: saturate(1.08) contrast(1.05);
 }
 .stage-card__cover-glow {

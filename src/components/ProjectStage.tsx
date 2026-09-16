@@ -103,7 +103,10 @@ export default function ProjectStage({ projects }: Props) {
 
     const drawCard = (card: HTMLAnchorElement, index: number, unfold: number) => {
       const angle = (index / projects.length) * TAU + (orbitElapsed / (ORBIT_SECONDS * 1000)) * TAU
-      const orbitX = Math.sin(angle) * 372
+      // 卡片在两侧仍要完整留在舞台内，不能让封面自带文字被容器裁切。
+      const halfStageWidth = (stageRef.current?.clientWidth ?? 960) / 2
+      const orbitRadiusX = Math.min(292, Math.max(180, halfStageWidth - 210))
+      const orbitX = Math.sin(angle) * orbitRadiusX
       const orbitY = (1 - Math.cos(angle)) * 54
       const orbitDepth = Math.cos(angle)
       const orbitZ = orbitDepth * 166
@@ -124,7 +127,8 @@ export default function ProjectStage({ projects }: Props) {
       const isBackgroundCard = hoverRef.current !== null && hoverRef.current !== index
       const isTransitioning = transitioningRef.current !== null
       const isOpening = transitioningRef.current === index
-      const x = stackX + (orbitX - stackX) * reveal
+      const hoverInward = Math.sign(orbitX) * hover * 16
+      const x = stackX + (orbitX - stackX) * reveal - hoverInward
       const y = stackY + (orbitY - stackY) * reveal - hover * 10
       const z = stackZ + (orbitZ - stackZ) * reveal + hover * 64
       const scale = stackScale + (orbitScale - stackScale) * reveal + hover * 0.055
