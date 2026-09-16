@@ -241,11 +241,42 @@ button { font-family: inherit; cursor: pointer; }
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  column-gap: clamp(48px, 7vw, 88px);
+  column-gap: clamp(52px, 6.5vw, 96px);
   width: 100%;
-  max-width: 980px;
+  max-width: 1040px;
 }
-.hero-copy { text-align: left; min-width: 0; }
+.hero-copy {
+  position: relative;
+  isolation: isolate;
+  text-align: left;
+  min-width: 0;
+}
+.hero-copy::before {
+  content: "";
+  position: absolute;
+  inset: -54px -72px;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 42% 48%, rgba(7, 13, 28, 0.54), transparent 72%);
+}
+
+.hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  color: var(--acc);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  animation: rise 0.9s -0.04s ease-out both;
+}
+.hero-eyebrow-mark {
+  width: 24px;
+  height: 1px;
+  flex: 0 0 auto;
+  background: linear-gradient(90deg, var(--acc), transparent);
+  box-shadow: 0 0 10px rgba(94, 234, 212, 0.62);
+}
 
 /* 头像：缓慢悬浮 + 背景光晕 + 玻璃高光 + 悬停轻微 3D 倾斜 */
 .hero-avatar {
@@ -269,8 +300,8 @@ button { font-family: inherit; cursor: pointer; }
   background:
     radial-gradient(closest-side, rgba(94, 234, 212, 0.42), transparent 72%),
     radial-gradient(60% 60% at 68% 28%, rgba(125, 211, 252, 0.34), transparent 72%);
-  filter: blur(22px);
-  opacity: 0.85;
+  filter: blur(24px);
+  opacity: 0.72;
   z-index: -1;
   transition: opacity 0.5s;
   animation: glow-breathe 7s ease-in-out infinite;
@@ -373,7 +404,8 @@ button { font-family: inherit; cursor: pointer; }
     0 0 0 7px rgba(10, 16, 32, 0.62),
     0 0 0 8px rgba(94, 234, 212, 0.34),
     0 24px 48px -14px rgba(2, 6, 16, 0.7),
-    0 36px 70px -24px rgba(94, 234, 212, 0.2);
+    0 36px 70px -24px rgba(94, 234, 212, 0.2),
+    inset 0 0 24px rgba(2, 6, 16, 0.18);
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s;
   animation: rise 0.9s ease-out backwards;
 }
@@ -409,10 +441,10 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 .hero-title {
-  font-size: clamp(2.5rem, 6.5vw, 4.3rem);
+  font-size: clamp(2.35rem, 5.8vw, 4rem);
   font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 1.15;
+  line-height: 1.12;
   text-shadow: 0 3px 26px rgba(94, 234, 212, 0.13);
   animation: rise 0.9s ease-out both;
 }
@@ -423,28 +455,52 @@ button { font-family: inherit; cursor: pointer; }
   color: transparent;
 }
 .hero-role {
-  margin-top: 18px;
-  font-size: clamp(0.95rem, 2vw, 1.15rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 20px;
+  padding: 7px 13px 7px 10px;
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  border-radius: 999px;
+  background: linear-gradient(100deg, rgba(94, 234, 212, 0.09), rgba(125, 211, 252, 0.03));
   color: var(--muted);
-  letter-spacing: 0.14em;
+  font-size: clamp(0.76rem, 1.45vw, 0.92rem);
+  letter-spacing: 0.08em;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 30px rgba(2, 6, 16, 0.12);
   animation: rise 0.9s 0.12s ease-out both;
 }
+.hero-role::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 0 3px rgba(94, 234, 212, 0.1), 0 0 12px rgba(94, 234, 212, 0.8);
+}
 .hero-tag {
-  margin-top: 14px;
+  margin-top: 18px;
   color: var(--muted);
-  font-size: 1.02rem;
-  max-width: 560px;
+  font-size: 1rem;
+  line-height: 1.85;
+  max-width: 520px;
   margin-left: 0;
   margin-right: 0;
   animation: rise 0.9s 0.2s ease-out both;
 }
 .hero-cta {
-  margin-top: 40px;
+  margin-top: 32px;
   display: flex;
-  gap: 14px;
+  gap: 12px;
   justify-content: flex-start;
   flex-wrap: wrap;
   animation: rise 0.9s 0.3s ease-out both;
+}
+.hero-cta .btn {
+  min-height: 46px;
+}
+.hero-cta .btn.ghost {
+  background: rgba(8, 12, 24, 0.26);
 }
 
 @keyframes rise {
@@ -986,6 +1042,7 @@ button { font-family: inherit; cursor: pointer; }
   /* Hero 退化为单栏：头像居上居中，文字恢复居中排版 */
   .hero-inner { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 44px; }
   .hero-copy { text-align: center; }
+  .hero-eyebrow { justify-content: center; }
   .hero-tag { margin-left: auto; margin-right: auto; }
   .hero-cta { justify-content: center; }
   .about-grid { grid-template-columns: 1fr; gap: 28px; }

@@ -21,8 +21,9 @@ export default function Hero() {
           </div>
           <div className="hero-avatar-glass" aria-hidden="true" />
         </div>
-        {/* 右：个人介绍（文案未改动） */}
+        {/* 右：个人介绍与首屏行动入口 */}
         <div className="hero-copy">
+          <p className="hero-eyebrow mono"><span className="hero-eyebrow-mark" aria-hidden="true" /> PERSONAL PORTFOLIO</p>
           <h1 className="hero-title">
             Hi, I'm <span className="grad">{site.name}</span>.
           </h1>
