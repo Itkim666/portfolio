@@ -3,7 +3,7 @@ import { about, site } from '../data/site'
 
 export default function About() {
   return (
-    <Section id="about" index="01" tag="ABOUT" title="About Me">
+    <Section id="about" index="01" tag="ABOUT" title="A little about me">
       <div className="about-grid">
         <div className="about-text">
           {about.paragraphs.map((p, i) => (

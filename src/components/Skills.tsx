@@ -13,6 +13,7 @@ export default function Skills() {
                 <span className="chip" key={s}>{s}</span>
               ))}
             </div>
+            <p className="skill-note">{g.note}</p>
           </div>
         ))}
       </div>

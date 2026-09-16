@@ -29,7 +29,7 @@ export default function Hero() {
           <p className="hero-role mono">{site.role}</p>
           <p className="hero-tag">{site.tagline}</p>
           <div className="hero-cta">
-            <a className="btn primary" href="#projects">View Projects</a>
+            <a className="btn primary" href="#projects">View Selected Work</a>
             <a className="btn ghost" href={site.github} target="_blank" rel="noreferrer">
               <GitHubIcon size={16} /> GitHub
             </a>

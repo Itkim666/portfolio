@@ -51,19 +51,18 @@ export default function ProjectDetail({ slug }: { slug: string }) {
                   <span className="chip sm" key={t}>{t}</span>
                 ))}
               </div>
-              <div className="pd-meta-row pd-meta-links">
-                {p.github && (
-                  <a className="btn ghost" href={p.github} target="_blank" rel="noreferrer">
-                    <GitHubIcon size={15} /> Source Code
-                  </a>
-                )}
-                {p.demo && (
-                  <a className="btn ghost" href={p.demo} target="_blank" rel="noreferrer">Live Demo ↗</a>
-                )}
-                {!p.github && !p.demo && (
-                  <span className="pd-mono-note mono">仓库链接待补充 · 见 data/projects.json</span>
-                )}
-              </div>
+              {(p.github || p.demo) && (
+                <div className="pd-meta-row pd-meta-links">
+                  {p.github && (
+                    <a className="btn ghost" href={p.github} target="_blank" rel="noreferrer">
+                      <GitHubIcon size={15} /> Source Code
+                    </a>
+                  )}
+                  {p.demo && (
+                    <a className="btn ghost" href={p.demo} target="_blank" rel="noreferrer">Live Demo ↗</a>
+                  )}
+                </div>
+              )}
             </div>
 
             <section id="pd-overview" className="pd-sec">

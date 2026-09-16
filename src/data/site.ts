@@ -1,8 +1,8 @@
 // ============ 个人信息配置：改这一个文件即可更新全站文案 ============
 export const site = {
   name: 'Itkim',
-  role: 'Computer Science / Computer Application',
-  tagline: 'I enjoy turning ideas into small, solid software — games, tools and web experiments.',
+  role: 'Computer Science Student · C/C++ · Web',
+  tagline: 'I build small games, tools and web experiments — then document what I learn along the way.',
   // 首页 Hero 左侧头像（放在 public/img/ 下，替换同名文件即可换头像）
   avatar: 'img/avatar.jpg',
   github: 'https://github.com/Itkim666',
@@ -28,14 +28,17 @@ export const skillGroups = [
   {
     title: 'Languages',
     items: ['C', 'C++', 'Python', 'JavaScript'],
+    note: '用于游戏逻辑、数据结构练习与小工具开发。',
   },
   {
     title: 'Web',
     items: ['HTML', 'CSS', 'React'],
+    note: '用于个人网站、交互实验与可复用模板。',
   },
   {
     title: 'Tools & CS',
     items: ['Git', 'GitHub', 'MySQL', '计算机网络'],
+    note: '把代码、文档和基础课程知识整理成完整项目。',
   },
 ]
 
@@ -43,7 +46,7 @@ export const education = [
   {
     period: '2023 — Present',
     title: '计算机科学与技术',
-    org: 'My University', // TODO: 替换为你的学校
+    org: '',
     note: '主修数据结构、操作系统、计算机网络、数据库原理。',
   },
   {

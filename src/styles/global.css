@@ -527,6 +527,7 @@ button { font-family: inherit; cursor: pointer; }
   margin-bottom: 18px;
 }
 .skill-chips { display: flex; flex-wrap: wrap; gap: 9px; }
+.skill-note { color: var(--faint); font-size: 13px; line-height: 1.6; margin-top: 18px; }
 
 /* ---------- 项目卡片 ---------- */
 .project-grid {
@@ -839,8 +840,6 @@ button { font-family: inherit; cursor: pointer; }
 .pd-meta-row { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
 .pd-date { color: var(--faint); font-size: 13px; margin-left: 4px; }
 .pd-meta-links { margin-top: 2px; }
-.pd-mono-note { color: var(--faint); font-size: 12.5px; }
-
 .pd-sec { margin-top: 58px; }
 .pd-h2 {
   font-size: 1.35rem;

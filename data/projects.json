@@ -2,12 +2,12 @@
   {
     "slug": "personal-website",
     "name": "Personal Website",
-    "description": "本网站本身：数据驱动的个人作品集，极光 + 星空 + 流星粒子化交互背景，React + TypeScript + Canvas 实现，零第三方动画库。",
+    "description": "一个把个人介绍、项目作品与技术文档放在一起的长期维护型个人网站。",
     "cover": "projects/personal-website/cover.svg",
     "technologies": ["React", "TypeScript", "Vite", "Canvas 2D"],
     "date": "2026-09",
-    "github": "",
-    "demo": "",
+    "github": "https://github.com/Itkim666/portfolio",
+    "demo": "https://itkim666.github.io/portfolio/",
     "status": "In Progress",
     "tags": ["Web", "Canvas", "Portfolio"],
     "details": {
@@ -39,7 +39,7 @@
   {
     "slug": "plant-vs-zombies",
     "name": "植物大战僵尸（复刻）",
-    "description": "基于 C++ 和 EasyX 的塔防游戏复刻：植物种植、僵尸波次、阳光经济与碰撞判定。示例条目 —— 请替换为你的真实项目信息。",
+    "description": "基于 C++ 和 EasyX 的塔防游戏复刻：植物种植、僵尸波次、阳光经济与碰撞判定。",
     "cover": "projects/plant-vs-zombies/cover.svg",
     "technologies": ["C++", "EasyX"],
     "date": "2026-06",
@@ -71,7 +71,7 @@
   {
     "slug": "website-design",
     "name": "website-design",
-    "description": "可持续扩展的网站模板库 Skill：一个 Skill + 一个模板库，同时面向 Codex 与 ZCode 读取同一套文件，新增模板只需加目录并在索引登记一行。",
+    "description": "把可复用的网站母版整理成一个模板库 Skill，让 Codex 与 ZCode 可以共享同一套模板规则。",
     "cover": "projects/website-design/cover.svg",
     "technologies": ["TypeScript", "Markdown", "Python", "React", "Vite"],
     "date": "2026-09",

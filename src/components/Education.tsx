@@ -11,7 +11,7 @@ export default function Education() {
             <div className="tl-body glass">
               <p className="tl-period mono">{e.period}</p>
               <h3 className="tl-title">{e.title}</h3>
-              <p className="tl-org">{e.org}</p>
+              {e.org && <p className="tl-org">{e.org}</p>}
               <p className="tl-note">{e.note}</p>
             </div>
           </div>

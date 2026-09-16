@@ -6,7 +6,7 @@ export default function ProjectsSection() {
   return (
     <Section id="projects" index="03" tag="PROJECTS" title="Projects">
       <p className="sec-desc">
-        项目由 <span className="mono">data/projects.json</span> 驱动，点击卡片查看完整技术文档。
+        挑几个我亲手做过、也从中学到东西的项目，点击卡片查看完整记录。
       </p>
       <div className="pgrid-wrap">
         <div className="project-grid">
