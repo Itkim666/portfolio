@@ -1109,6 +1109,41 @@ button { font-family: inherit; cursor: pointer; }
 .stage-card[data-copy-layout="top-right"] .stage-card__copy-foot { right: 52%; left: 8%; bottom: 9%; }
 .stage-card.is-opening { pointer-events: none; }
 
+/* 将网页信息移到封面下方的延伸区：原图自带的标题与站内介绍不再争夺同一块画面。 */
+.project-stage { min-height: 620px; }
+.stage-card { aspect-ratio: 16 / 14; }
+.stage-card__cover {
+  height: 61%;
+  border-bottom: 1px solid rgba(148, 230, 240, 0.16);
+}
+.stage-card__body {
+  top: 61%;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 18px 16px;
+  background:
+    radial-gradient(ellipse at 12% 0%, rgba(79, 184, 255, 0.12), transparent 55%),
+    linear-gradient(118deg, rgba(10, 34, 54, 0.9), rgba(8, 18, 40, 0.94));
+  text-align: left;
+}
+.stage-card__copy-head,
+.stage-card__copy-foot,
+.stage-card[data-copy-layout="top-right"] .stage-card__copy-head,
+.stage-card[data-copy-layout="top-right"] .stage-card__copy-foot {
+  position: static;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  width: 100%;
+  text-align: left;
+}
+.stage-card__copy-foot { margin-top: auto; }
+.stage-card__eyebrow { margin-bottom: 4px; }
+.stage-card__name { font-size: clamp(0.92rem, 1.35vw, 1.18rem); }
+.stage-card__desc { max-width: min(100%, 31rem); font-size: clamp(9px, 0.85vw, 11px); }
+.stage-card__date { margin-top: 8px; }
+
 @keyframes stage-galaxy-spin { to { transform: rotate(360deg); } }
 @keyframes stage-galaxy-drift { to { transform: translate3d(5%, -4%, 0) scale(1.08); } }
 @keyframes stage-galaxy-twinkle { to { opacity: 0.42; transform: scale(1.06); } }
@@ -1705,7 +1740,7 @@ body.is-project-cover-revealing .pd-footer-links { animation: project-detail-rev
 
 /* 触摸设备保留横向浏览，避免把桌面端透视和鼠标交互强加到小屏。 */
 @media (max-width: 640px) {
-  .project-stage { min-height: 390px; border-radius: 14px; }
+  .project-stage { min-height: 500px; border-radius: 14px; }
   .project-stage__aura, .project-stage__orbit-line { opacity: 0.44; }
   .project-stage__cards {
     position: relative;
@@ -1731,13 +1766,15 @@ body.is-project-cover-revealing .pd-footer-links { animation: project-detail-rev
     width: auto;
     min-height: 0;
     display: block;
-    aspect-ratio: 19 / 10;
+    aspect-ratio: 16 / 14;
     opacity: 0.78 !important;
     filter: none !important;
     transform: none !important;
     scroll-snap-align: center;
   }
   .project-stage .stage-card:active { opacity: 1 !important; transform: scale(0.985) !important; }
+  .project-stage .stage-card__cover { height: 61%; }
+  .project-stage .stage-card__body { top: 61%; padding: 13px 15px 15px; }
   .project-stage__caption { bottom: 13px; left: 20px; }
 }
 
