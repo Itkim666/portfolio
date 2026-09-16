@@ -3,33 +3,47 @@ import type { PointerEvent as ReactPointerEvent } from 'react'
 import type { Project } from '../types'
 import { rememberScrollFromCard } from '../utils/scrollMemory'
 
-type StagePhase = 'entering' | 'stacked' | 'orbit'
-type StageSlot = 'front' | 'right' | 'left'
+type StagePhase = 'idle' | 'stacked' | 'unfolding' | 'orbit'
 
 interface Props {
   projects: Project[]
 }
 
-function getSlot(index: number, activeIndex: number, count: number): StageSlot {
-  const relative = (index - activeIndex + count) % count
-  if (relative === 0) return 'front'
-  if (relative === 1) return 'right'
-  return 'left'
+const TAU = Math.PI * 2
+const ORBIT_SECONDS = 42
+
+function clamp(value: number, min = 0, max = 1) {
+  return Math.min(max, Math.max(min, value))
+}
+
+function easeOutExpo(value: number) {
+  return value >= 1 ? 1 : 1 - 2 ** (-10 * value)
 }
 
 export default function ProjectStage({ projects }: Props) {
   const stageRef = useRef<HTMLDivElement>(null)
   const sceneRef = useRef<HTMLDivElement>(null)
-  const cardsRef = useRef<HTMLDivElement>(null)
-  const cardRefs = useRef<Array<HTMLElement | null>>([])
-  const phaseTimers = useRef<number[]>([])
-  const hasStarted = useRef(false)
-  const pointer = useRef({ targetX: 0, targetY: 0, currentX: 0, currentY: 0, frame: 0 })
-  const [phase, setPhase] = useState<StagePhase>('entering')
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const cardRefs = useRef<Array<HTMLAnchorElement | null>>([])
+  const timersRef = useRef<number[]>([])
+  const startedRef = useRef(false)
+  const phaseRef = useRef<StagePhase>('idle')
+  const unfoldStartedAt = useRef(0)
+  const hoverRef = useRef<number | null>(null)
+  const hoverStrength = useRef<number[]>([])
+  const pointer = useRef({ targetX: 0, targetY: 0, currentX: 0, currentY: 0 })
+  const [phase, setPhase] = useState<StagePhase>('idle')
   const [entered, setEntered] = useState(false)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [coverErrors, setCoverErrors] = useState<Record<string, boolean>>({})
+
+  const setStagePhase = (next: StagePhase) => {
+    phaseRef.current = next
+    setPhase(next)
+  }
+
+  useEffect(() => {
+    hoverStrength.current = projects.map(() => 0)
+  }, [projects.length])
 
   useEffect(() => {
     const stage = stageRef.current
@@ -37,23 +51,25 @@ export default function ProjectStage({ projects }: Props) {
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const startSequence = () => {
-      if (hasStarted.current) return
-      hasStarted.current = true
+      if (startedRef.current) return
+      startedRef.current = true
       setEntered(true)
       if (reduced) {
-        setPhase('orbit')
+        setStagePhase('orbit')
         return
       }
 
-      setPhase('entering')
-      const stackTimer = window.setTimeout(() => setPhase('stacked'), 720)
-      const orbitTimer = window.setTimeout(() => setPhase('orbit'), 1420)
-      phaseTimers.current = [stackTimer, orbitTimer]
+      setStagePhase('stacked')
+      const unfoldTimer = window.setTimeout(() => {
+        unfoldStartedAt.current = performance.now()
+        setStagePhase('unfolding')
+      }, 860)
+      timersRef.current = [unfoldTimer]
     }
 
     if (!('IntersectionObserver' in window)) {
       startSequence()
-      return () => phaseTimers.current.forEach((timer) => window.clearTimeout(timer))
+      return () => timersRef.current.forEach((timer) => window.clearTimeout(timer))
     }
 
     const observer = new IntersectionObserver(([entry]) => {
@@ -61,83 +77,120 @@ export default function ProjectStage({ projects }: Props) {
         startSequence()
         observer.disconnect()
       }
-    }, { threshold: 0.24 })
+    }, { threshold: 0.26 })
     observer.observe(stage)
 
     return () => {
       observer.disconnect()
-      phaseTimers.current.forEach((timer) => window.clearTimeout(timer))
+      timersRef.current.forEach((timer) => window.clearTimeout(timer))
     }
   }, [projects.length])
 
   useEffect(() => {
-    if (phase !== 'orbit' || hoveredIndex !== null || projects.length < 2) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
-    const timer = window.setInterval(() => {
-      setActiveIndex((current) => (current + 1) % projects.length)
-    }, 5200)
-    return () => window.clearInterval(timer)
-  }, [hoveredIndex, phase, projects.length])
-
-  useEffect(() => {
     const scene = sceneRef.current
-    if (!scene || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!scene || projects.length === 0) return
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    let frame = 0
+    let previous = performance.now()
+    let orbitElapsed = 0
+    let orbitVelocity = 1
 
-    const tick = () => {
-      const state = pointer.current
-      state.currentX += (state.targetX - state.currentX) * 0.08
-      state.currentY += (state.targetY - state.currentY) * 0.08
-      scene.style.setProperty('--stage-tilt-x', `${state.currentX}deg`)
-      scene.style.setProperty('--stage-tilt-y', `${state.currentY}deg`)
-      state.frame = window.requestAnimationFrame(tick)
+    const drawCard = (card: HTMLAnchorElement, index: number, unfold: number) => {
+      const angle = (index / projects.length) * TAU + (orbitElapsed / (ORBIT_SECONDS * 1000)) * TAU
+      const orbitX = Math.sin(angle) * 332
+      const orbitY = (1 - Math.cos(angle)) * 58
+      const orbitDepth = Math.cos(angle)
+      const orbitZ = orbitDepth * 166
+      const orbitScale = 0.68 + ((orbitDepth + 1) / 2) * 0.25
+      const orbitOpacity = 0.46 + ((orbitDepth + 1) / 2) * 0.54
+      const orbitBlur = ((1 - orbitDepth) / 2) * 1.15
+      const orbitRotation = -Math.sin(angle) * 24
+      const stackOffset = index - (projects.length - 1) / 2
+      const stackX = stackOffset * 8
+      const stackY = stackOffset * -6
+      const stackZ = 56 - index * 18
+      const stackScale = 0.77 - index * 0.025
+      const stackRotation = stackOffset * 2.4
+      const individualUnfold = clamp((unfold - index * 0.13) / 0.72)
+      const reveal = easeOutExpo(individualUnfold)
+      const hoverTarget = hoverRef.current === index ? 1 : 0
+      hoverStrength.current[index] += (hoverTarget - hoverStrength.current[index]) * 0.095
+      const hover = hoverStrength.current[index]
+      const isBackgroundCard = hoverRef.current !== null && hoverRef.current !== index
+      const x = stackX + (orbitX - stackX) * reveal
+      const y = stackY + (orbitY - stackY) * reveal - hover * 10
+      const z = stackZ + (orbitZ - stackZ) * reveal + hover * 64
+      const scale = stackScale + (orbitScale - stackScale) * reveal + hover * 0.055
+      const opacity = 0.72 + (orbitOpacity - 0.72) * reveal + hover * (1 - orbitOpacity)
+      const blur = orbitBlur * reveal * (1 - hover)
+      const rotation = stackRotation + (orbitRotation - stackRotation) * reveal
+
+      card.style.transform = `translate(-50%, -50%) translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, ${z.toFixed(2)}px) scale(${scale.toFixed(3)}) rotateY(${rotation.toFixed(2)}deg)`
+      card.style.opacity = String(clamp(opacity * (isBackgroundCard ? 0.84 : 1), 0.42, 1))
+      card.style.filter = `blur(${blur.toFixed(2)}px) saturate(${(0.82 + reveal * 0.18 + hover * 0.08).toFixed(2)}) brightness(${isBackgroundCard ? 0.84 : 1})`
+      card.style.zIndex = String(Math.round((orbitDepth + 1) * 100 + hover * 100))
+      card.style.setProperty('--orbital-depth', String((orbitDepth + 1) / 2))
+      card.style.setProperty('--hovered-glow', String(hover))
     }
 
-    pointer.current.frame = window.requestAnimationFrame(tick)
-    return () => window.cancelAnimationFrame(pointer.current.frame)
-  }, [])
+    const tick = (now: number) => {
+      const delta = Math.min(48, now - previous)
+      previous = now
+      const state = pointer.current
+      state.currentX += (state.targetX - state.currentX) * 0.075
+      state.currentY += (state.targetY - state.currentY) * 0.075
+      scene.style.setProperty('--stage-tilt-x', `${state.currentX.toFixed(2)}deg`)
+      scene.style.setProperty('--stage-tilt-y', `${state.currentY.toFixed(2)}deg`)
 
-  useEffect(() => {
-    const cards = cardsRef.current
-    if (!cards || phase !== 'orbit' || window.innerWidth > 640) return
-    const active = cardRefs.current[activeIndex]
-    if (!active) return
-    cards.scrollTo({
-      left: Math.max(0, active.offsetLeft - (cards.clientWidth - active.clientWidth) / 2),
-      behavior: 'smooth',
-    })
-  }, [activeIndex, phase])
+      const currentPhase = phaseRef.current
+      let unfold = currentPhase === 'orbit' ? 1 : 0
+      if (currentPhase === 'unfolding') {
+        unfold = clamp((now - unfoldStartedAt.current) / 1520)
+        if (unfold >= 1) setStagePhase('orbit')
+      }
+
+      if (currentPhase === 'orbit' || phaseRef.current === 'orbit') {
+        if (reduced) {
+          orbitVelocity = 0
+          orbitElapsed = 0
+        } else {
+          const velocityTarget = hoverRef.current === null ? 1 : 0.035
+          orbitVelocity += (velocityTarget - orbitVelocity) * 0.028
+          orbitElapsed += delta * orbitVelocity
+        }
+        unfold = 1
+      }
+
+      if (entered || phaseRef.current !== 'idle') {
+        cardRefs.current.forEach((card, index) => {
+          if (card) drawCard(card, index, reduced ? 1 : unfold)
+        })
+      }
+      frame = window.requestAnimationFrame(tick)
+    }
+
+    frame = window.requestAnimationFrame(tick)
+    return () => window.cancelAnimationFrame(frame)
+  }, [entered, projects.length])
+
+  const updateHovered = (index: number | null) => {
+    hoverRef.current = index
+    setHoveredIndex(index)
+  }
 
   const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.pointerType === 'touch') return
     const rect = event.currentTarget.getBoundingClientRect()
     const x = (event.clientX - rect.left) / rect.width
     const y = (event.clientY - rect.top) / rect.height
-    pointer.current.targetX = (0.5 - y) * 4.2
-    pointer.current.targetY = (x - 0.5) * 5.2
+    pointer.current.targetX = (0.5 - y) * 3.4
+    pointer.current.targetY = (x - 0.5) * 4.2
   }
 
   const handlePointerLeave = () => {
     pointer.current.targetX = 0
     pointer.current.targetY = 0
-  }
-
-  const handleCardsScroll = () => {
-    const cards = cardsRef.current
-    if (!cards || window.innerWidth > 640) return
-    const center = cards.scrollLeft + cards.clientWidth / 2
-    let nearest = activeIndex
-    let distance = Number.POSITIVE_INFINITY
-    cardRefs.current.forEach((card, index) => {
-      if (!card) return
-      const cardCenter = card.offsetLeft + card.offsetWidth / 2
-      const nextDistance = Math.abs(cardCenter - center)
-      if (nextDistance < distance) {
-        distance = nextDistance
-        nearest = index
-      }
-    })
-    if (nearest !== activeIndex) setActiveIndex(nearest)
+    updateHovered(null)
   }
 
   if (projects.length === 0) return null
@@ -152,62 +205,47 @@ export default function ProjectStage({ projects }: Props) {
       <div className="project-stage__scene" ref={sceneRef}>
         <div className="project-stage__aura" aria-hidden="true" />
         <div className="project-stage__orbit-line" aria-hidden="true" />
-        <div className="project-stage__cards" ref={cardsRef} onScroll={handleCardsScroll}>
+        <div className="project-stage__cards">
           {projects.map((project, index) => {
-            const slot = getSlot(index, activeIndex, projects.length)
-            const isActive = index === activeIndex
-            const isHovered = index === hoveredIndex
             const hasCoverError = coverErrors[project.slug]
+            const isHovered = hoveredIndex === index
 
             return (
-              <article
+              <a
                 key={project.slug}
                 ref={(node) => { cardRefs.current[index] = node }}
-                className={`stage-card stage-card--${slot}${isActive ? ' is-active' : ''}${isHovered ? ' is-hovered' : ''}`}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                aria-current={isActive ? 'true' : undefined}
+                className={`stage-card${isHovered ? ' is-hovered' : ''}`}
+                href={`#/project/${project.slug}`}
+                aria-label={`查看 ${project.name}`}
+                onClick={rememberScrollFromCard}
+                onMouseEnter={() => updateHovered(index)}
+                onMouseLeave={() => updateHovered(null)}
               >
-                <a
-                  className="stage-card__cover-link"
-                  href={`#/project/${project.slug}`}
-                  aria-label={`查看 ${project.name}`}
-                  onClick={rememberScrollFromCard}
-                >
-                  <div className="stage-card__cover">
-                    {hasCoverError || !project.cover ? (
-                      <div className="stage-card__fallback"><span>{project.name[0]}</span></div>
-                    ) : (
-                      <img
-                        src={project.cover}
-                        alt={`${project.name} 封面`}
-                        loading="lazy"
-                        onError={() => setCoverErrors((current) => ({ ...current, [project.slug]: true }))}
-                      />
-                    )}
-                    <span className="stage-card__cover-glow" aria-hidden="true" />
-                  </div>
-                </a>
+                <div className="stage-card__cover">
+                  {hasCoverError || !project.cover ? (
+                    <div className="stage-card__fallback"><span>{project.name[0]}</span></div>
+                  ) : (
+                    <img
+                      src={project.cover}
+                      alt={`${project.name} 封面`}
+                      loading="lazy"
+                      onError={() => setCoverErrors((current) => ({ ...current, [project.slug]: true }))}
+                    />
+                  )}
+                  <span className="stage-card__cover-glow" aria-hidden="true" />
+                  <span className="stage-card__hint mono" aria-hidden="true">VIEW PROJECT ↗</span>
+                </div>
                 <div className="stage-card__body">
                   <p className="stage-card__eyebrow mono">{project.tags[0] ?? 'PROJECT'} <span>/ {project.date}</span></p>
-                  <div className="stage-card__head">
-                    <h3 className="stage-card__name">
-                      <a href={`#/project/${project.slug}`} onClick={rememberScrollFromCard}>{project.name}</a>
-                    </h3>
-                    <span className={`status status-${project.status.replace(/\s/g, '').toLowerCase()}`}>{project.status}</span>
-                  </div>
-                  <p className="stage-card__tags mono">{project.technologies.slice(0, 4).join('  /  ')}</p>
+                  <h3 className="stage-card__name">{project.name}</h3>
                   <p className="stage-card__desc">{project.description}</p>
-                  <a className="stage-card__link" href={`#/project/${project.slug}`} onClick={rememberScrollFromCard}>
-                    View Project <span aria-hidden="true">↗</span>
-                  </a>
                 </div>
-              </article>
+              </a>
             )
           })}
         </div>
       </div>
-      <p className="project-stage__caption mono" aria-hidden="true">SELECTED WORK / 0{activeIndex + 1} — 0{projects.length}</p>
+      <p className="project-stage__caption mono" aria-hidden="true">ALL PROJECTS / {projects.length} IN ORBIT</p>
     </div>
   )
 }

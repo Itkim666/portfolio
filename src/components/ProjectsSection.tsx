@@ -9,10 +9,7 @@ export default function ProjectsSection() {
         挑几个我亲手做过、也从中学到东西的项目，点击卡片查看完整记录。
       </p>
       <div className="project-stage-wrap">
-        <ProjectStage projects={projects.slice(0, 3)} />
-        <a className="stage-all-link" href="#/all-projects" aria-label="查看全部项目">
-          View All Projects <span aria-hidden="true">→</span>
-        </a>
+        <ProjectStage projects={projects} />
       </div>
     </Section>
   )

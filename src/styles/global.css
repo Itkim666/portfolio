@@ -875,12 +875,121 @@ button { font-family: inherit; cursor: pointer; }
 .stage-card__link span { transition: transform 0.3s; }
 .stage-card__link:hover span { transform: translate(4px, -3px); }
 .project-stage__caption { position: absolute; left: 24px; bottom: 22px; color: var(--faint); font-size: 10px; letter-spacing: 0.18em; opacity: 0.72; }
-.stage-all-link { display: inline-flex; align-items: center; gap: 10px; margin: 20px 0 0 auto; color: var(--muted); font: 12px var(--mono); letter-spacing: 0.1em; }
-.stage-all-link::after { content: ""; position: absolute; width: 0; height: 1px; margin-top: 24px; background: var(--acc); transition: width 0.35s; }
-.stage-all-link span { color: var(--acc); transition: transform 0.3s; }
-.stage-all-link:hover { color: var(--text); }
-.stage-all-link:hover::after { width: 142px; }
-.stage-all-link:hover span { transform: translateX(5px); }
+/* 连续轨道：所有项目使用同一条时间轴，不再按离散槽位跳转。 */
+.project-stage {
+  min-height: 500px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 47%, rgba(94, 234, 212, 0.1), transparent 31%),
+    radial-gradient(ellipse at 50% 82%, rgba(125, 211, 252, 0.08), transparent 48%);
+}
+.project-stage::before { width: min(760px, 94vw); height: 250px; opacity: 0.82; }
+.project-stage::after { width: min(560px, 76vw); height: 155px; opacity: 0.72; }
+.project-stage__aura { width: 430px; height: 210px; opacity: 0.82; }
+.project-stage__orbit-line { width: min(700px, 90vw); height: 238px; opacity: 0.84; }
+.stage-card {
+  width: clamp(218px, 25vw, 292px);
+  min-height: 0;
+  aspect-ratio: 16 / 10;
+  display: block;
+  border-color: rgba(148, 163, 184, 0.2);
+  border-radius: 16px;
+  background: #0b1324;
+  box-shadow:
+    0 22px 46px -24px rgba(0, 0, 0, 0.9),
+    0 0 20px rgba(94, 234, 212, calc(var(--orbital-depth, .5) * 0.12));
+  cursor: pointer;
+  transition:
+    transform 0.86s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.72s ease,
+    filter 0.72s ease,
+    box-shadow 0.55s ease,
+    border-color 0.55s ease;
+}
+.project-stage.is-unfolding .stage-card,
+.project-stage.is-orbit .stage-card {
+  transition: box-shadow 0.55s ease, border-color 0.55s ease;
+}
+.stage-card::before {
+  z-index: 4;
+  background: radial-gradient(180px circle at 50% 15%, rgba(216, 251, 255, 0.18), transparent 66%);
+  opacity: var(--hovered-glow, 0);
+}
+.stage-card.is-hovered {
+  border-color: rgba(94, 234, 212, 0.62);
+  box-shadow:
+    0 32px 68px -24px rgba(0, 0, 0, 0.94),
+    0 0 34px rgba(94, 234, 212, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.13);
+}
+.stage-card__cover {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  border: 0;
+}
+.stage-card__cover img { transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1), filter 0.55s; }
+.stage-card.is-hovered .stage-card__cover img,
+.stage-card:focus-visible .stage-card__cover img {
+  transform: scale(1.055) translateY(-2px);
+  filter: saturate(1.08) contrast(1.05);
+}
+.stage-card__cover-glow {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), transparent 30%, transparent 58%, rgba(94, 234, 212, 0.1));
+}
+.stage-card__hint {
+  position: absolute;
+  right: 12px;
+  top: 11px;
+  z-index: 3;
+  color: rgba(232, 238, 247, 0.78);
+  font-size: 9px;
+  letter-spacing: 0.09em;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.32s 0.28s, transform 0.42s 0.28s;
+}
+.stage-card.is-hovered .stage-card__hint,
+.stage-card:focus-visible .stage-card__hint { opacity: 1; transform: translateY(0); }
+.stage-card__body {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 5;
+  display: block;
+  min-height: 0;
+  padding: 44px 16px 15px;
+  color: var(--text);
+  background: linear-gradient(180deg, transparent, rgba(3, 6, 14, 0.94) 48%);
+  opacity: 0;
+  filter: blur(8px);
+  clip-path: inset(100% 0 0 0);
+  pointer-events: none;
+  transform: translateY(12px);
+  transition:
+    opacity 0.34s 0.36s ease,
+    filter 0.45s 0.36s ease,
+    clip-path 0.55s 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.55s 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.stage-card.is-hovered .stage-card__body,
+.stage-card:focus-visible .stage-card__body {
+  opacity: 1;
+  filter: none;
+  clip-path: inset(0);
+  transform: translateY(0);
+}
+.stage-card__eyebrow { margin: 0; font-size: 9px; letter-spacing: 0.14em; }
+.stage-card__name { margin-top: 4px; color: var(--text); font-size: 1rem; line-height: 1.2; }
+.stage-card__desc {
+  margin-top: 5px;
+  color: rgba(232, 238, 247, 0.72);
+  font-size: 11px;
+  line-height: 1.5;
+  -webkit-line-clamp: 2;
+}
+.project-stage__caption { left: 22px; bottom: 18px; font-size: 9px; letter-spacing: 0.15em; }
 
 /* “全部项目”入口：三个横向点，位于卡片行右侧、与卡片垂直居中。
    宽屏时落在容器右侧的间隔区（与参考图红框位置一致） */
@@ -1427,13 +1536,50 @@ button { font-family: inherit; cursor: pointer; }
   }
   .project-stage__orbit-line { width: 540px; opacity: 0.7; }
   .project-stage__caption { left: 22px; bottom: 17px; }
-  .stage-all-link { margin-top: 18px; }
   .project-grid { grid-template-columns: 1fr; }
   .gh-card { flex-direction: column; text-align: center; gap: 14px; padding: 28px 24px; }
   .gh-go { margin-left: 0; }
   .pd-shots { grid-template-columns: 1fr; }
   .pd-aside { margin: 0 -20px 8px; top: 56px; }
   .footer { justify-content: center; text-align: center; }
+}
+
+/* 触摸设备保留横向浏览，避免把桌面端透视和鼠标交互强加到小屏。 */
+@media (max-width: 640px) {
+  .project-stage { min-height: 390px; border-radius: 14px; }
+  .project-stage__aura, .project-stage__orbit-line { opacity: 0.44; }
+  .project-stage__cards {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 100%;
+    padding: 24px 22px 34px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .project-stage__cards::-webkit-scrollbar { display: none; }
+  .project-stage .stage-card,
+  .project-stage.is-stacked .stage-card,
+  .project-stage.is-unfolding .stage-card,
+  .project-stage.is-orbit .stage-card {
+    position: relative;
+    inset: auto;
+    left: auto;
+    top: auto;
+    flex: 0 0 min(76vw, 280px);
+    width: auto;
+    min-height: 0;
+    display: block;
+    aspect-ratio: 16 / 10;
+    opacity: 0.78 !important;
+    filter: none !important;
+    transform: none !important;
+    scroll-snap-align: center;
+  }
+  .project-stage .stage-card:active { opacity: 1 !important; transform: scale(0.985) !important; }
+  .project-stage__caption { bottom: 13px; left: 20px; }
 }
 
 /* ---------- 减少动态效果 ---------- */
