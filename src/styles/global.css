@@ -554,6 +554,17 @@ button { font-family: inherit; cursor: pointer; }
   background: rgba(8, 12, 24, 0.26);
 }
 
+/* 首页不再展示头像：将原双栏信息完整收束到首屏中心。 */
+.hero-inner {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  max-width: 760px;
+}
+.hero-copy { text-align: center; }
+.hero-eyebrow { justify-content: center; }
+.hero-tag { margin-left: auto; margin-right: auto; }
+.hero-cta { justify-content: center; }
+
 @keyframes rise {
   from { opacity: 0; transform: translateY(18px); }
   to { opacity: 1; transform: translateY(0); }
