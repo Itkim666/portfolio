@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { MouseEvent } from 'react'
 import type { Project } from '../types'
 import GitHubIcon from './GitHubIcon'
@@ -13,7 +13,27 @@ function trackGlow(e: MouseEvent<HTMLElement>) {
 
 export default function ProjectCard({ project }: { project: Project }) {
   const [coverErr, setCoverErr] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
+  const cardRef = useRef<HTMLElement>(null)
   const p = project
+
+  useEffect(() => {
+    const card = cardRef.current
+    if (!card || !('IntersectionObserver' in window)) {
+      setIsVisible(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true)
+        observer.disconnect()
+      }
+    }, { threshold: 0.16, rootMargin: '0px 0px -8% 0px' })
+
+    observer.observe(card)
+    return () => observer.disconnect()
+  }, [])
 
   // 在点击的那一刻记录位置：此时 DOM 还是列表页，
   // 若等页面切到详情页再读 scrollY，浏览器已因内容高度变化夹紧过滚动值。
@@ -21,7 +41,11 @@ export default function ProjectCard({ project }: { project: Project }) {
   const onClickCard = () => rememberScrollFromCard()
 
   return (
-    <article className="pcard glass" onMouseMove={trackGlow}>
+    <article
+      ref={cardRef}
+      className={`pcard glass project-card-reveal${isVisible ? ' is-visible' : ''}`}
+      onMouseMove={trackGlow}
+    >
       <a
         className="pcard-cover-link"
         href={`#/project/${p.slug}`}

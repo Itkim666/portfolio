@@ -621,6 +621,15 @@ button { font-family: inherit; cursor: pointer; }
   flex-direction: column;
   transition: transform 0.35s, border-color 0.35s, box-shadow 0.35s;
 }
+/* 项目卡片进入视口时轻微上移并渐显，参考 Eduard Bodak 的 card reveal 节奏 */
+.project-card-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s, box-shadow 0.35s;
+}
+.project-card-reveal.is-visible { opacity: 1; transform: translateY(0); }
+.project-grid > .project-card-reveal:nth-child(2) { transition-delay: 0.08s; }
+.project-grid > .project-card-reveal:nth-child(3) { transition-delay: 0.16s; }
 /* 鼠标跟随高光 */
 .pcard::before {
   content: "";
@@ -1040,4 +1049,5 @@ button { font-family: inherit; cursor: pointer; }
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  .project-card-reveal { opacity: 1; transform: none; }
 }
