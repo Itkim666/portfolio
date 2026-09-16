@@ -204,6 +204,11 @@ export default function ProjectStage({ projects }: Props) {
     const y = (event.clientY - rect.top) / rect.height
     pointer.current.targetX = (0.5 - y) * 3.4
     pointer.current.targetY = (x - 0.5) * 4.2
+
+    // 3D 变换下有时鼠标会落在舞台空层，而不是后方可见卡片的 DOM 命中区域。
+    if (!(event.target as HTMLElement).closest('.stage-card')) {
+      updateHovered(findVisibleCardIndex(event.clientX, event.clientY))
+    }
   }
 
   const handlePointerLeave = () => {
@@ -212,9 +217,25 @@ export default function ProjectStage({ projects }: Props) {
     updateHovered(null)
   }
 
-  const openProject = (event: ReactMouseEvent<HTMLAnchorElement>, project: Project, index: number) => {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
-    event.preventDefault()
+  const findVisibleCardIndex = (clientX: number, clientY: number) => {
+    const candidates = cardRefs.current
+      .map((card, index) => ({ card, index }))
+      .filter(({ card }) => {
+        if (!card || card.style.opacity === '0') return false
+        const rect = card.getBoundingClientRect()
+        return clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom
+      })
+
+    if (candidates.length === 0) return null
+    // 同一点存在多张卡片时优先取视觉层级最高的一张。
+    return candidates.reduce((front, candidate) => {
+      const frontDepth = Number.parseInt(front.card?.style.zIndex || '0', 10)
+      const candidateDepth = Number.parseInt(candidate.card?.style.zIndex || '0', 10)
+      return candidateDepth > frontDepth ? candidate : front
+    }).index
+  }
+
+  const launchProject = (project: Project, index: number) => {
     const card = cardRefs.current[index]
     if (!card) return
 
@@ -233,6 +254,20 @@ export default function ProjectStage({ projects }: Props) {
     }
   }
 
+  const openProject = (event: ReactMouseEvent<HTMLAnchorElement>, project: Project, index: number) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+    event.preventDefault()
+    launchProject(project, index)
+  }
+
+  const handleStageClick = (event: ReactMouseEvent<HTMLDivElement>) => {
+    if ((event.target as HTMLElement).closest('.stage-card')) return
+    const index = findVisibleCardIndex(event.clientX, event.clientY)
+    if (index === null) return
+    event.preventDefault()
+    launchProject(projects[index], index)
+  }
+
   if (projects.length === 0) return null
 
   return (
@@ -241,6 +276,7 @@ export default function ProjectStage({ projects }: Props) {
       className={`project-stage is-${phase}${entered ? ' is-entered' : ''}${transitioningIndex !== null ? ' is-transitioning' : ''}`}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
+      onClick={handleStageClick}
     >
       <div className="project-stage__scene" ref={sceneRef}>
         <div className="project-stage__aura" aria-hidden="true" />
