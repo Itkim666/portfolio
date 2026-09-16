@@ -281,7 +281,7 @@ button { font-family: inherit; cursor: pointer; }
 /* 头像：缓慢悬浮 + 背景光晕 + 玻璃高光 + 悬停轻微 3D 倾斜 */
 .hero-avatar {
   position: relative;
-  width: clamp(190px, 24vw, 264px);
+  width: clamp(204px, 25vw, 284px);
   aspect-ratio: 1;
   isolation: isolate;
   perspective: 800px; /* 让 img 的 rotate3d 有真实的透视 */
@@ -311,6 +311,26 @@ button { font-family: inherit; cursor: pointer; }
   50% { transform: scale(1.1); }
 }
 .hero-avatar:hover::before { opacity: 1; }
+/* 外围断续光环：给头像增加精致的空间层次，但不形成厚重边框 */
+.hero-avatar::after {
+  content: "";
+  position: absolute;
+  inset: -6%;
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  border-left-color: transparent;
+  border-bottom-color: rgba(94, 234, 212, 0.34);
+  border-radius: 50%;
+  transform: rotate(-18deg) scaleY(0.84);
+  filter: blur(0.15px);
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 0;
+  animation: avatar-halo-drift 16s linear infinite reverse;
+}
+@keyframes avatar-halo-drift {
+  from { transform: rotate(-18deg) scaleY(0.84); }
+  to { transform: rotate(342deg) scaleY(0.84); }
+}
 /* 玻璃盖板：给照片罩一层顶部高光与内阴影，产生玻璃质感 */
 .hero-avatar-orbit,
 .hero-avatar-glass,
@@ -322,6 +342,7 @@ button { font-family: inherit; cursor: pointer; }
 .hero-avatar-orbit {
   pointer-events: none;
   z-index: 0;
+  opacity: 0.82;
   animation: orbit-drift 18s linear infinite;
 }
 @keyframes orbit-drift {
@@ -395,7 +416,7 @@ button { font-family: inherit; cursor: pointer; }
   82% { opacity: 0; transform: translate(var(--meteor-x), var(--meteor-y)) rotate(var(--meteor-angle)) scaleX(1); }
 }
 .hero-avatar-media {
-  inset: 8px;
+  inset: 9px;
   overflow: hidden;
   z-index: 1;
   background: var(--bg2);
@@ -422,13 +443,36 @@ button { font-family: inherit; cursor: pointer; }
 .hero-avatar-media img {
   display: block;
   position: absolute;
-  width: 120%;
-  height: 120%;
+  width: 124%;
+  height: 124%;
   max-width: none;
-  left: -14%;
-  top: 3%;
+  left: -16%;
+  top: 1%;
   object-fit: cover;
-  /* 以人物头脸为视觉中心，保留头顶与下巴的安全区 */
+  filter: saturate(0.88) contrast(1.08) brightness(0.92);
+  transition: filter 0.5s ease;
+  /* 适度放大并向左校准，让人物头脸成为视觉中心，保留头顶与下巴安全区 */
+}
+.hero-avatar-media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background:
+    linear-gradient(136deg, rgba(255, 255, 255, 0.16), transparent 24%, transparent 72%, rgba(94, 234, 212, 0.08)),
+    radial-gradient(80% 70% at 48% 44%, transparent 52%, rgba(2, 6, 16, 0.3) 100%);
+  pointer-events: none;
+}
+.hero-avatar-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border: 1px solid rgba(220, 252, 255, 0.18);
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -18px 26px rgba(2, 6, 16, 0.18);
+  pointer-events: none;
 }
 .hero-avatar:hover .hero-avatar-media {
   transform: translateY(-3px) rotate3d(1, -0.6, 0, 4deg) scale(1.02);
@@ -438,6 +482,9 @@ button { font-family: inherit; cursor: pointer; }
     0 0 0 8px rgba(94, 234, 212, 0.5),
     0 30px 56px -14px rgba(2, 6, 16, 0.75),
     0 44px 84px -24px rgba(94, 234, 212, 0.3);
+}
+.hero-avatar:hover .hero-avatar-media img {
+  filter: saturate(0.96) contrast(1.05) brightness(0.98);
 }
 
 .hero-title {
@@ -498,6 +545,10 @@ button { font-family: inherit; cursor: pointer; }
 }
 .hero-cta .btn {
   min-height: 46px;
+}
+.hero-cta .btn.primary {
+  background: linear-gradient(110deg, rgba(94, 234, 212, 0.2), rgba(125, 211, 252, 0.16));
+  box-shadow: 0 12px 30px rgba(8, 30, 46, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 .hero-cta .btn.ghost {
   background: rgba(8, 12, 24, 0.26);
