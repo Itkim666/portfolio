@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#071b28"/>
+      <stop offset=".48" stop-color="#0a1428"/>
+      <stop offset="1" stop-color="#070a18"/>
+    </linearGradient>
+    <radialGradient id="aurora" cx=".2" cy=".1" r=".72">
+      <stop offset="0" stop-color="#5eead4" stop-opacity=".27"/>
+      <stop offset="1" stop-color="#5eead4" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="halo" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#bfe9ff" stop-opacity=".34"/>
+      <stop offset="1" stop-color="#bfe9ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="loop" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5eead4"/>
+      <stop offset=".52" stop-color="#7dd3fc"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#sky)"/>
+  <rect width="800" height="450" fill="url(#aurora)"/>
+  <g fill="#cfe3ff" opacity=".75">
+    <circle cx="65" cy="74" r="1"/><circle cx="138" cy="148" r="1.2"/><circle cx="238" cy="54" r=".8"/>
+    <circle cx="344" cy="118" r="1"/><circle cx="472" cy="72" r="1.2"/><circle cx="604" cy="155" r=".9"/>
+    <circle cx="728" cy="62" r="1.1"/><circle cx="744" cy="334" r=".9"/><circle cx="102" cy="374" r="1"/>
+    <circle cx="306" cy="360" r="1.2"/><circle cx="548" cy="382" r=".8"/>
+  </g>
+  <circle cx="650" cy="86" r="38" fill="url(#halo)" opacity=".6"/>
+  <circle cx="650" cy="86" r="2.2" fill="#fff"/>
+  <path d="M94 312 L215 283" stroke="#dceeff" stroke-opacity=".45" stroke-width="1.4" stroke-linecap="round"/>
+  <circle cx="215" cy="283" r="1.8" fill="#dceeff"/>
+
+  <g transform="translate(505 102)">
+    <circle cx="110" cy="118" r="89" fill="none" stroke="url(#loop)" stroke-opacity=".18" stroke-width="1"/>
+    <path d="M46 171c-35-30-39-83-9-119 30-36 83-45 124-20" fill="none" stroke="url(#loop)" stroke-width="2" stroke-linecap="round" stroke-dasharray="72 18 24 22" opacity=".82"/>
+    <path d="M214 169c31-37 28-91-7-122-35-31-89-31-122 0" fill="none" stroke="#7dd3fc" stroke-width="1" stroke-linecap="round" stroke-dasharray="48 17" opacity=".45"/>
+    <circle cx="176" cy="34" r="3" fill="#d8fbff"/>
+    <g transform="translate(47 68)">
+      <rect x="0" y="0" width="126" height="90" rx="9" fill="#0d1a2b" stroke="#2b4562"/>
+      <rect x="13" y="14" width="100" height="8" rx="4" fill="#1f3752"/>
+      <circle cx="19" cy="18" r="3" fill="#5eead4"/>
+      <rect x="13" y="37" width="66" height="7" rx="3.5" fill="#49637f"/>
+      <rect x="13" y="51" width="88" height="7" rx="3.5" fill="#314b68"/>
+      <rect x="13" y="65" width="48" height="7" rx="3.5" fill="#5eead4" opacity=".65"/>
+    </g>
+  </g>
+
+  <text x="48" y="184" font-family="Consolas, monospace" font-size="15" fill="#5eead4" letter-spacing="4">~/codex/memory</text>
+  <text x="46" y="238" font-family="Segoe UI, sans-serif" font-size="36" font-weight="700" fill="#e8eef7">Self Improvement</text>
+  <text x="48" y="273" font-family="Segoe UI, sans-serif" font-size="16" fill="#8b98ad">Portable knowledge base · Hooks · Privacy</text>
+  <text x="48" y="315" font-family="Consolas, monospace" font-size="12" fill="#657b98">LEARN  /  VERIFY  /  REFLECT</text>
+</svg>

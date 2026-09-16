@@ -1,5 +1,42 @@
 [
   {
+    "slug": "self-improvement",
+    "name": "Self Improvement for Codex",
+    "description": "面向 Codex 的可移植长期经验库：把已验证的经验、Hook 规则与隐私过滤整理成可安装、可验证的开源项目。",
+    "cover": "projects/self-improvement/cover.svg",
+    "technologies": ["PowerShell", "Node.js", "Markdown", "JSON"],
+    "date": "2026-09",
+    "github": "https://github.com/Itkim666/self-improvement",
+    "demo": "",
+    "status": "Completed",
+    "tags": ["Codex", "Automation", "Tooling"],
+    "details": {
+      "background": "把真实使用中的 Codex 用户级 Self Improvement 配置整理成一个可发布、可脱敏、可移植的独立项目，让长期经验能够被分类保存，并在后续会话开始或提交新提示时注入相关上下文。",
+      "goals": "在保留真实能力边界的前提下，提供清晰的安装、验证和卸载流程；让经验库可复用、可维护，同时避免把个人历史知识、线程信息或凭据带进公开仓库。",
+      "features": [
+        "SessionStart、UserPromptSubmit 与 Stop 事件的 Hook 注册与调用",
+        "按错误、工具、项目、流程和经验路由知识模块，并在输出前进行隐私过滤",
+        "Pattern-Key 解析、重复清理与 INDEX 自动刷新",
+        "PowerShell 安装、卸载、安装验证与自动化配置验证脚本",
+        "提供 Codex-only 手动复盘触发词与可移植的规则、知识模块模板"
+      ],
+      "architecture": "hooks.json 负责事件接入，Node Hook 读取 INDEX.md、LEARNINGS.md、ERRORS.md、TOOLS.md、PROJECTS.md 与 WORKFLOWS.md 并完成路由和脱敏；PowerShell 脚本负责安装基线、校验与卸载恢复，规则模板与 Skill 文档独立存放。",
+      "process": "先从真实运行配置中提取已验证的 Hook、知识模块和安全边界，再移除个人运行时数据，补齐安装、验证、卸载与已知限制文档，最后用脚本检查发布包结构和隐私过滤行为。",
+      "problems": [
+        {
+          "problem": "经验库需要跨会话复用，但公开发布不能携带个人历史知识或认证信息。",
+          "solution": "将发布版整理为干净模板，Hook 输出前做敏感值过滤，个人知识只保留在本机运行时目录。"
+        },
+        {
+          "problem": "规则描述的目标能力容易被误认为本地脚本已经全部实现。",
+          "solution": "README 明确区分已实现能力、真实观察到的配置和仍依赖 Codex app 的边界，不夸大自动化范围。"
+        }
+      ],
+      "results": "一个可以独立发布和复用的 Codex 经验库项目：包含安装器、Hook、知识模板、验证脚本和安全边界文档，可从 GitHub 克隆后按说明部署。",
+      "screenshots": []
+    }
+  },
+  {
     "slug": "personal-website",
     "name": "Personal Website",
     "description": "一个把个人介绍、项目作品与技术文档放在一起的长期维护型个人网站。",
