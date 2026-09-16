@@ -646,6 +646,242 @@ button { font-family: inherit; cursor: pointer; }
 /* 卡片行包裹层：给“全部项目”按钮提供定位参照 */
 .pgrid-wrap { position: relative; }
 
+/* ---------- Projects 3D 展示舞台 ---------- */
+.project-stage-wrap {
+  position: relative;
+  margin-top: 8px;
+}
+.project-stage {
+  position: relative;
+  min-height: 590px;
+  isolation: isolate;
+  perspective: 1300px;
+  overflow: hidden;
+  border-top: 1px solid rgba(148, 163, 184, 0.08);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+  background:
+    radial-gradient(ellipse at 50% 48%, rgba(94, 234, 212, 0.08), transparent 34%),
+    radial-gradient(ellipse at 50% 82%, rgba(125, 211, 252, 0.06), transparent 46%);
+}
+.project-stage::before,
+.project-stage::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(680px, 88vw);
+  height: 230px;
+  border: 1px solid rgba(125, 211, 252, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotateX(66deg) rotateZ(-8deg);
+  pointer-events: none;
+  z-index: -1;
+}
+.project-stage::after {
+  width: min(480px, 70vw);
+  height: 130px;
+  border-color: rgba(94, 234, 212, 0.1);
+  transform: translate(-50%, -50%) rotateX(66deg) rotateZ(12deg);
+}
+.project-stage__scene {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--stage-tilt-x, 0deg)) rotateY(var(--stage-tilt-y, 0deg));
+  will-change: transform;
+}
+.project-stage__aura {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  width: 330px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(94, 234, 212, 0.16), transparent 70%);
+  filter: blur(24px);
+  transform: translate(-50%, -50%) rotateX(68deg);
+  pointer-events: none;
+}
+.project-stage__orbit-line {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  width: min(620px, 84vw);
+  height: 220px;
+  border: 1px solid rgba(94, 234, 212, 0.14);
+  border-left-color: transparent;
+  border-right-color: rgba(125, 211, 252, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotateX(68deg) rotateZ(-5deg);
+  box-shadow: 0 0 26px rgba(94, 234, 212, 0.06);
+  pointer-events: none;
+}
+.project-stage__cards {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+.stage-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(370px, 35vw);
+  min-height: 418px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(16, 27, 45, 0.86), rgba(7, 12, 25, 0.94));
+  box-shadow: 0 30px 70px -28px rgba(0, 0, 0, 0.88), 0 0 36px rgba(94, 234, 212, 0.06);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  opacity: 0.54;
+  filter: blur(1.2px) saturate(0.8);
+  transform: translate(-50%, -50%) translate3d(0, 0, -180px) scale(0.72) rotateY(0deg);
+  transition:
+    transform 1.05s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.8s ease,
+    filter 0.8s ease,
+    border-color 0.8s ease,
+    box-shadow 0.8s ease;
+}
+.project-stage:not(.is-entered) .stage-card {
+  opacity: 0;
+  transform: translate(-50%, -50%) translate3d(0, 110px, -420px) scale(0.48) rotateY(32deg);
+}
+.project-stage.is-entering .stage-card--front {
+  opacity: 0.8;
+  transform: translate(-50%, -50%) translate3d(-350px, 92px, -250px) scale(0.72) rotateY(34deg) rotateZ(-5deg);
+}
+.project-stage.is-entering .stage-card--right {
+  opacity: 0.72;
+  transform: translate(-50%, -50%) translate3d(360px, -42px, -300px) scale(0.68) rotateY(-38deg) rotateZ(5deg);
+}
+.project-stage.is-entering .stage-card--left {
+  opacity: 0.68;
+  transform: translate(-50%, -50%) translate3d(-70px, -170px, -340px) scale(0.64) rotateY(25deg) rotateZ(-2deg);
+}
+.project-stage.is-stacked .stage-card--front {
+  opacity: 1;
+  z-index: 4;
+  transform: translate(-50%, -50%) translate3d(0, 4px, 100px) scale(0.79) rotateY(0deg) rotateZ(-2deg);
+}
+.project-stage.is-stacked .stage-card--right {
+  opacity: 0.78;
+  z-index: 3;
+  transform: translate(-50%, -50%) translate3d(9px, -8px, 52px) scale(0.76) rotateY(-5deg) rotateZ(2deg);
+}
+.project-stage.is-stacked .stage-card--left {
+  opacity: 0.64;
+  z-index: 2;
+  transform: translate(-50%, -50%) translate3d(-12px, 15px, 8px) scale(0.73) rotateY(6deg) rotateZ(-3deg);
+}
+.project-stage.is-orbit .stage-card--front {
+  opacity: 1;
+  z-index: 5;
+  filter: none;
+  border-color: rgba(94, 234, 212, 0.44);
+  box-shadow: 0 36px 80px -28px rgba(0, 0, 0, 0.92), 0 0 42px rgba(94, 234, 212, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform: translate(-50%, -50%) translate3d(0, 0, 150px) scale(1) rotateY(0deg);
+}
+.project-stage.is-orbit .stage-card--right {
+  z-index: 2;
+  transform: translate(-50%, -50%) translate3d(270px, -26px, -94px) scale(0.77) rotateY(-29deg) rotateZ(3deg);
+}
+.project-stage.is-orbit .stage-card--left {
+  z-index: 2;
+  transform: translate(-50%, -50%) translate3d(-270px, 22px, -94px) scale(0.77) rotateY(29deg) rotateZ(-3deg);
+}
+.stage-card.is-hovered {
+  z-index: 8;
+}
+.project-stage.is-orbit .stage-card--front.is-hovered {
+  transform: translate(-50%, -50%) translate3d(0, -10px, 184px) scale(1.035) rotateY(0deg);
+}
+.project-stage.is-orbit .stage-card--right.is-hovered {
+  opacity: 0.86;
+  filter: blur(0) saturate(1);
+  transform: translate(-50%, -50%) translate3d(270px, -26px, -58px) scale(0.8) rotateY(-25deg) rotateZ(3deg);
+}
+.project-stage.is-orbit .stage-card--left.is-hovered {
+  opacity: 0.86;
+  filter: blur(0) saturate(1);
+  transform: translate(-50%, -50%) translate3d(-270px, 22px, -58px) scale(0.8) rotateY(25deg) rotateZ(-3deg);
+}
+.stage-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: radial-gradient(220px circle at var(--card-mx, 50%) var(--card-my, 18%), rgba(216, 251, 255, 0.14), transparent 62%);
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+.stage-card:hover::before { opacity: 1; }
+.stage-card__cover-link { display: block; position: relative; z-index: 1; }
+.stage-card__cover {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  background: linear-gradient(135deg, #0d1728, #08141b);
+}
+.stage-card__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), filter 0.8s;
+}
+.stage-card:hover .stage-card__cover img { transform: scale(1.045) translate3d(0, -2px, 0); filter: saturate(1.08) contrast(1.04); }
+.stage-card__cover-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 28%, transparent 72%, rgba(94, 234, 212, 0.08));
+}
+.stage-card__fallback { width: 100%; height: 100%; display: grid; place-items: center; }
+.stage-card__fallback span { color: rgba(125, 211, 252, 0.32); font: 700 3rem var(--mono); }
+.stage-card__body {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  padding: 18px 22px 20px;
+  opacity: 0;
+  filter: blur(7px);
+  clip-path: inset(0 0 100% 0);
+  transform: translateY(18px);
+  transition: opacity 0.55s ease, filter 0.7s ease, clip-path 0.75s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.project-stage.is-orbit .stage-card.is-active .stage-card__body {
+  opacity: 1;
+  filter: none;
+  clip-path: inset(0);
+  transform: translateY(0);
+  transition-delay: 0.12s;
+}
+.stage-card__eyebrow { color: var(--acc); font-size: 10px; letter-spacing: 0.16em; }
+.stage-card__eyebrow span { color: var(--faint); }
+.stage-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-top: 6px; }
+.stage-card__name { font-size: 1.22rem; line-height: 1.28; letter-spacing: -0.02em; }
+.stage-card__name a { color: var(--text); }
+.stage-card__name a:hover { color: var(--acc2); }
+.stage-card__tags { margin-top: 8px; color: var(--faint); font-size: 11px; letter-spacing: 0.04em; }
+.stage-card__desc { margin-top: 9px; color: var(--muted); font-size: 13px; line-height: 1.65; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.stage-card__link { display: inline-flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 14px; color: var(--acc); font-size: 13px; font-weight: 600; }
+.stage-card__link span { transition: transform 0.3s; }
+.stage-card__link:hover span { transform: translate(4px, -3px); }
+.project-stage__caption { position: absolute; left: 24px; bottom: 22px; color: var(--faint); font-size: 10px; letter-spacing: 0.18em; opacity: 0.72; }
+.stage-all-link { display: inline-flex; align-items: center; gap: 10px; margin: 20px 0 0 auto; color: var(--muted); font: 12px var(--mono); letter-spacing: 0.1em; }
+.stage-all-link::after { content: ""; position: absolute; width: 0; height: 1px; margin-top: 24px; background: var(--acc); transition: width 0.35s; }
+.stage-all-link span { color: var(--acc); transition: transform 0.3s; }
+.stage-all-link:hover { color: var(--text); }
+.stage-all-link:hover::after { width: 142px; }
+.stage-all-link:hover span { transform: translateX(5px); }
+
 /* “全部项目”入口：三个横向点，位于卡片行右侧、与卡片垂直居中。
    宽屏时落在容器右侧的间隔区（与参考图红框位置一致） */
 .more-dots {
@@ -1096,6 +1332,11 @@ button { font-family: inherit; cursor: pointer; }
   .hero-eyebrow { justify-content: center; }
   .hero-tag { margin-left: auto; margin-right: auto; }
   .hero-cta { justify-content: center; }
+  .project-stage { min-height: 560px; perspective: 1050px; }
+  .project-stage.is-orbit .stage-card--right { transform: translate(-50%, -50%) translate3d(218px, -22px, -78px) scale(0.72) rotateY(-25deg) rotateZ(3deg); }
+  .project-stage.is-orbit .stage-card--left { transform: translate(-50%, -50%) translate3d(-218px, 18px, -78px) scale(0.72) rotateY(25deg) rotateZ(-3deg); }
+  .project-stage.is-orbit .stage-card--right.is-hovered { transform: translate(-50%, -50%) translate3d(218px, -22px, -42px) scale(0.76) rotateY(-22deg) rotateZ(3deg); }
+  .project-stage.is-orbit .stage-card--left.is-hovered { transform: translate(-50%, -50%) translate3d(-218px, 18px, -42px) scale(0.76) rotateY(22deg) rotateZ(-3deg); }
   .about-grid { grid-template-columns: 1fr; gap: 28px; }
   .skill-grid { grid-template-columns: 1fr; }
   /* minmax(0,1fr)：默认 1fr 的 auto 最小值会被长内容撑破容器导致横向溢出 */
@@ -1141,6 +1382,52 @@ button { font-family: inherit; cursor: pointer; }
   .nav-inner { padding: 0 20px; }
   .pd-topbar { padding: 0 20px; }
   .hero-cta { flex-direction: column; align-items: center; }
+  .project-stage { min-height: 530px; overflow: hidden; perspective: none; border-radius: 16px; }
+  .project-stage::before, .project-stage::after { opacity: 0.62; }
+  .project-stage__scene { transform: none !important; }
+  .project-stage__cards {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    height: 100%;
+    padding: 28px 24px 42px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    transform-style: flat;
+  }
+  .project-stage__cards::-webkit-scrollbar { display: none; }
+  .stage-card,
+  .project-stage:not(.is-entered) .stage-card,
+  .project-stage.is-entering .stage-card,
+  .project-stage.is-stacked .stage-card,
+  .project-stage.is-orbit .stage-card,
+  .project-stage.is-orbit .stage-card--front,
+  .project-stage.is-orbit .stage-card--right,
+  .project-stage.is-orbit .stage-card--left {
+    position: relative;
+    inset: auto;
+    left: auto;
+    top: auto;
+    flex: 0 0 min(82vw, 340px);
+    min-height: 405px;
+    opacity: 0.48;
+    filter: saturate(0.82);
+    transform: none;
+    scroll-snap-align: center;
+  }
+  .project-stage.is-entered .stage-card { opacity: 0.48; }
+  .project-stage.is-orbit .stage-card.is-active,
+  .project-stage.is-orbit .stage-card.is-hovered {
+    opacity: 1;
+    filter: none;
+    transform: translateY(-4px) scale(1.015);
+  }
+  .project-stage__orbit-line { width: 540px; opacity: 0.7; }
+  .project-stage__caption { left: 22px; bottom: 17px; }
+  .stage-all-link { margin-top: 18px; }
   .project-grid { grid-template-columns: 1fr; }
   .gh-card { flex-direction: column; text-align: center; gap: 14px; padding: 28px 24px; }
   .gh-go { margin-left: 0; }
@@ -1158,4 +1445,8 @@ button { font-family: inherit; cursor: pointer; }
     transition-duration: 0.01ms !important;
   }
   .project-card-reveal { opacity: 1; transform: none; }
+  .project-stage { perspective: none; }
+  .project-stage__scene { transform: none !important; }
+  .project-stage__cards { transform-style: flat; }
+  .project-stage .stage-card { filter: none !important; }
 }
