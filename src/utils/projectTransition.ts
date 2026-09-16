@@ -57,6 +57,9 @@ export function startProjectTransition({ source, cover, onNavigate }: ProjectTra
   window.setTimeout(() => {
     document.body.classList.remove('is-project-transitioning')
     document.body.classList.add('is-project-cover-revealing')
+    // 全屏后只保留 transform 合成层，2 秒上滑不再参与几何属性的布局计算。
+    overlay.style.willChange = 'transform'
+    overlay.style.boxShadow = 'none'
     overlay.classList.add('is-revealing')
   }, 810)
 
@@ -65,7 +68,7 @@ export function startProjectTransition({ source, cover, onNavigate }: ProjectTra
     document.documentElement.style.overflow = previousOverflow
     document.body.classList.remove('is-project-cover-revealing')
     active = false
-  }, 1900)
+  }, 2950)
 
   return true
 }
