@@ -105,9 +105,10 @@ export default function ProjectStage({ projects }: Props) {
       const angle = (index / projects.length) * TAU + (orbitElapsed / (ORBIT_SECONDS * 1000)) * TAU
       // 卡片在两侧仍要完整留在舞台内，不能让封面自带文字被容器裁切。
       const halfStageWidth = (stageRef.current?.clientWidth ?? 960) / 2
-      const orbitRadiusX = Math.min(292, Math.max(180, halfStageWidth - 210))
+      const orbitRadiusX = Math.min(420, Math.max(0, halfStageWidth - 210))
       const orbitX = Math.sin(angle) * orbitRadiusX
-      const orbitY = (1 - Math.cos(angle)) * 54
+      // 前、左、后、右分布到不同的平面位置，避免可见封面彼此遮挡。
+      const orbitY = (1 - Math.cos(angle)) * 150
       const orbitDepth = Math.cos(angle)
       const orbitZ = orbitDepth * 166
       const orbitScale = 0.68 + ((orbitDepth + 1) / 2) * 0.25

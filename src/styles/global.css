@@ -1110,8 +1110,8 @@ button { font-family: inherit; cursor: pointer; }
 .stage-card.is-opening { pointer-events: none; }
 
 /* 将网页信息移到封面下方的延伸区：原图自带的标题与站内介绍不再争夺同一块画面。 */
-.project-stage { min-height: 620px; }
-.stage-card { aspect-ratio: 16 / 14; }
+.project-stage { min-height: 760px; }
+.stage-card { top: 42%; aspect-ratio: 16 / 14; }
 .stage-card__cover {
   height: 61%;
   border-bottom: 1px solid rgba(148, 230, 240, 0.16);
@@ -1635,7 +1635,7 @@ body.is-project-cover-revealing .pd-footer-links { animation: project-detail-rev
   .hero-eyebrow { justify-content: center; }
   .hero-tag { margin-left: auto; margin-right: auto; }
   .hero-cta { justify-content: center; }
-  .project-stage { min-height: 560px; perspective: 1050px; }
+  .project-stage { min-height: 760px; perspective: 1050px; }
   .project-stage.is-orbit .stage-card--right { transform: translate(-50%, -50%) translate3d(218px, -22px, -78px) scale(0.72) rotateY(-25deg) rotateZ(3deg); }
   .project-stage.is-orbit .stage-card--left { transform: translate(-50%, -50%) translate3d(-218px, 18px, -78px) scale(0.72) rotateY(25deg) rotateZ(-3deg); }
   .project-stage.is-orbit .stage-card--right.is-hovered { transform: translate(-50%, -50%) translate3d(218px, -22px, -42px) scale(0.76) rotateY(-22deg) rotateZ(3deg); }
