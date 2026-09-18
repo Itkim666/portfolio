@@ -74,34 +74,29 @@
     }
   },
   {
-    "slug": "plant-vs-zombies",
-    "name": "植物大战僵尸（复刻）",
-    "description": "基于 C++ 和 EasyX 的塔防游戏复刻：植物种植、僵尸波次、阳光经济与碰撞判定。",
-    "cover": "projects/plant-vs-zombies/cover.svg",
-    "technologies": ["C++", "EasyX"],
-    "date": "2026-06",
-    "github": "",
+    "slug": "github-profile",
+    "name": "GitHub Profile",
+    "description": "个人 GitHub 主页仓库：用一份 README 汇总身份、方向与全部项目入口，作为整个作品集的索引页。",
+    "cover": "projects/github-profile/cover.svg",
+    "technologies": ["Markdown", "GitHub"],
+    "date": "2026-09",
+    "github": "https://github.com/Itkim666/Itkim666",
     "demo": "",
     "status": "In Progress",
-    "tags": ["Game", "C++"],
+    "tags": ["Profile", "Documentation", "Index"],
     "details": {
-      "background": "想检验 C++ 面向对象与游戏循环的实际运用，选择复刻经典塔防玩法：规则清晰、涉及资源管理、实体系统与碰撞检测，规模适合单人完成。",
-      "goals": "实现完整的“阳光 → 种植 → 防御 → 波次推进”循环；实体（植物 / 僵尸 / 子弹）用继承与多态组织；逻辑渲染分离，稳定 60 FPS。",
+      "background": "GitHub 主页仓库是别人点进头像后看到的第一页，也是整个作品集的索引。此前它只是一份占位 README——没有项目入口，也没有在线地址，已经做完的项目不会出现在这里，访问者看不到任何实际成果。",
+      "goals": "把主页 README 补齐成一份真正可用的索引：首屏看清身份与方向，往下能直接进入每一个已发布的项目和它的在线地址。只写能对上仓库的事实，不给星标数、下载量这类没有依据的数字留位置。",
       "features": [
-        "五类植物：向日葵、豌豆射手、坚果墙、寒冰射手、樱桃炸弹",
-        "僵尸波次系统：普通 / 路障 / 铁桶，波次间隔与数量随关卡推进",
-        "阳光经济：天降阳光 + 向日葵产出，种植消耗与冷却",
-        "碰撞与攻击判定：同行索敌、射速控制、僵尸啃食减速"
+        "首屏身份卡：姓名、专业方向（C/C++ · Web）与当前状态",
+        "项目索引：portfolio、self-improvement、website-design 各一句话定位 + 仓库直达链接",
+        "在线地址：已由 GitHub Pages 托管的个人站点直接给出可点击链接",
+        "学习计划：正在推进的计算机网络、MySQL 与工程实践方向",
+        "纯 Markdown 实现：不引入徽章服务、外部图片或构建流程，渲染结果在 GitHub 上稳定可控"
       ],
-      "architecture": "Game 主循环驱动 Scene 场景状态机；Entity 基类派生 Plant / Zombie / Bullet / Sun 四族；Map 负责格子坐标换算，Collider 提供矩形相交检测；资源由 ImagePool 统一加载。",
-      "process": "先完成窗口、贴图加载与主循环，再实现单个实体（豌豆射手 → 普通僵尸）打通最小闭环，之后横向扩展实体种类，最后加入波次、UI 与音效。",
-      "problems": [
-        {
-          "problem": "多实体同时索敌时每帧两两比较，僵尸数量上百后帧率下降。",
-          "solution": "按行（lane）分桶：僵尸只与本行植物比较，子弹只与本行僵尸比较，复杂度从 O(n²) 降为 O(n)。"
-        }
-      ],
-      "results": "可完整游玩的塔防 Demo，单局 10–15 分钟，稳定 60 FPS；在此基础上计划加入存档与关卡编辑器。",
+      "architecture": "仓库只有一份 README.md（默认分支 main），没有任何依赖或构建产物。内容按“身份 → 技术栈 → 项目索引 → 学习计划 → 联系方式”分段，项目索引逐条指向 Itkim666 名下的仓库；链接全部使用 Markdown 原生语法，因此不依赖任何外部服务。",
+      "process": "先把占位 README 替换为真实身份与方向，再逐个补充项目的定位说明和链接，最后逐条核对链接指向的仓库确实存在、且标注的主要语言与 GitHub 识别到的一致。",
+      "results": "主页从一份占位文本变成可用的个人索引入口：访问者在首屏即可知道我是谁、在做什么，并能直接进入每一个已发布的项目与其在线地址。",
       "screenshots": []
     }
   },

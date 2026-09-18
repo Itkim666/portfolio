@@ -16,3 +16,7 @@ dist/
 .card3.png
 .chips3.png
 *.tmp.png
+
+# GitHub 主页仓库（Itkim666/Itkim666）的 README 草稿，
+# 内容属于另一个仓库，不应提交进本站仓库。
+GITHUB-PROFILE-README.md
