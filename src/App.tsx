@@ -3,6 +3,7 @@ import BackgroundCanvas from './components/BackgroundCanvas'
 import HomePage from './pages/HomePage'
 import ProjectDetail from './components/project/ProjectDetail'
 import AllProjectsPage from './pages/AllProjectsPage'
+import NotFoundPage from './pages/NotFoundPage'
 import { useHashRoute } from './hooks/useHashRoute'
 import { consumeReturn } from './utils/scrollMemory'
 // 瞬间滚动：临时覆盖 CSS 的 scroll-behavior: smooth，
@@ -64,6 +65,7 @@ export default function App() {
       {route.view === 'home' && <HomePage />}
       {route.view === 'project' && <ProjectDetail slug={route.slug} />}
       {route.view === 'allProjects' && <AllProjectsPage />}
+      {route.view === 'notFound' && <NotFoundPage path={route.path} />}
     </>
   )
 }
