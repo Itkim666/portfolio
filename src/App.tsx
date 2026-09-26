@@ -6,23 +6,16 @@ import AllProjectsPage from './pages/AllProjectsPage'
 import NotFoundPage from './pages/NotFoundPage'
 import { useHashRoute } from './hooks/useHashRoute'
 import { consumeReturn } from './utils/scrollMemory'
-// 瞬间滚动：临时覆盖 CSS 的 scroll-behavior: smooth，
-// 否则从别的页面返回首页时会看到“从顶部一路滑下来”。
-// 统一用 window.scrollTo（显式算出目标偏移），比 scrollIntoView 更可控，
-// 也避免不同环境对 scrollIntoView 行为不一致。
+// 路由切页必须瞬间定位；全局页面锚点仍可使用 CSS 平滑滚动。
 function jump(target?: HTMLElement | null, y?: number) {
-  const html = document.documentElement
-  const prev = html.style.scrollBehavior
-  html.style.scrollBehavior = 'auto'
+  let top = 0
   if (typeof y === 'number') {
-    window.scrollTo(0, y)
+    top = y
   } else if (target) {
     const margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0
-    window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY - margin)
-  } else {
-    window.scrollTo(0, 0)
+    top = target.getBoundingClientRect().top + window.scrollY - margin
   }
-  html.style.scrollBehavior = prev
+  window.scrollTo({ top, left: 0, behavior: 'instant' })
 }
 
 export default function App() {

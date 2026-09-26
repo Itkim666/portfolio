@@ -1149,8 +1149,6 @@ button { font-family: inherit; cursor: pointer; }
 .stage-card__date { display: block; margin-top: 8px; color: var(--copy-meta); font-size: clamp(8px, 0.68vw, 9.5px); letter-spacing: 0.12em; }
 .stage-card[data-copy-layout="top-right"] .stage-card__copy-head { top: 10%; left: 54%; right: 8%; }
 .stage-card[data-copy-layout="top-right"] .stage-card__copy-foot { right: 52%; left: 8%; bottom: 9%; }
-.stage-card.is-opening { pointer-events: none; }
-
 /* 将网页信息移到封面下方的延伸区：原图自带的标题与站内介绍不再争夺同一块画面。 */
 .project-stage { min-height: 720px; }
 .stage-card { top: 30%; aspect-ratio: 16 / 14; }
@@ -1189,43 +1187,6 @@ button { font-family: inherit; cursor: pointer; }
 @keyframes stage-galaxy-spin { to { transform: rotate(360deg); } }
 @keyframes stage-galaxy-drift { to { transform: translate3d(5%, -4%, 0) scale(1.08); } }
 @keyframes stage-galaxy-twinkle { to { opacity: 0.42; transform: scale(1.06); } }
-
-/* 项目卡片共享元素转场：详情先在封面背后渲染，再由封面上移揭示。 */
-.project-transition-cover {
-  position: fixed;
-  z-index: 1000;
-  overflow: hidden;
-  border-radius: 16px;
-  background: #07111f;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
-  pointer-events: none;
-  will-change: left, top, width, height, border-radius, transform;
-  transition:
-    left 0.68s cubic-bezier(0.22, 1, 0.36, 1),
-    top 0.68s cubic-bezier(0.22, 1, 0.36, 1),
-    width 0.68s cubic-bezier(0.22, 1, 0.36, 1),
-    height 0.68s cubic-bezier(0.22, 1, 0.36, 1),
-    border-radius 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 2s cubic-bezier(0.76, 0, 0.24, 1);
-}
-.project-transition-cover img { width: 100%; height: 100%; object-fit: cover; }
-.project-transition-cover.is-expanding { left: 0 !important; top: 0 !important; width: 100vw !important; height: 100vh !important; border-radius: 0; }
-.project-transition-cover.is-revealing { transform: translate3d(0, -100%, 0); }
-body.is-project-transitioning .project-stage.is-transitioning { pointer-events: none; }
-body.is-project-transitioning .pd-topbar,
-body.is-project-transitioning .pd-wrap { opacity: 0; transform: translateY(24px); }
-body.is-project-cover-revealing .pd-topbar { animation: project-detail-reveal 0.52s 0.1s both cubic-bezier(0.22, 1, 0.36, 1); }
-body.is-project-cover-revealing .pd-title,
-body.is-project-cover-revealing .pd-desc,
-body.is-project-cover-revealing .sec-tag,
-body.is-project-cover-revealing .all-back { animation: project-detail-reveal 0.48s 0.16s both cubic-bezier(0.22, 1, 0.36, 1); }
-body.is-project-cover-revealing .pd-meta { animation: project-detail-reveal 0.5s 0.26s both cubic-bezier(0.22, 1, 0.36, 1); }
-body.is-project-cover-revealing .pd-sec,
-body.is-project-cover-revealing .pd-footer-links { animation: project-detail-reveal 0.52s 0.34s both cubic-bezier(0.22, 1, 0.36, 1); }
-@keyframes project-detail-reveal {
-  from { opacity: 0; filter: blur(8px); transform: translateY(20px); }
-  to { opacity: 1; filter: none; transform: translateY(0); }
-}
 
 /* “全部项目”入口：三个横向点，固定在单行卡片的最右侧。 */
 .more-dots {

@@ -1,6 +1,7 @@
 import Section from './Section'
 import { projects } from '../data/projects'
 import ProjectCard from './ProjectCard'
+import { handleHashRouteClick } from '../utils/hashNavigation'
 
 export default function ProjectsSection() {
   return (
@@ -14,7 +15,13 @@ export default function ProjectsSection() {
             <ProjectCard key={project.slug} project={project} />
           ))}
         </div>
-        <a className="more-dots" href="#/all-projects" aria-label="查看全部项目" title="全部项目">
+        <a
+          className="more-dots"
+          href="#/all-projects"
+          aria-label="查看全部项目"
+          title="全部项目"
+          onClick={(event) => handleHashRouteClick(event, '/all-projects')}
+        >
           <span /><span /><span />
         </a>
       </div>

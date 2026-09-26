@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from 'react'
 import type { Project } from '../types'
+import { navigateHashRoute } from '../utils/hashNavigation'
 import { rememberScrollFromCard } from '../utils/scrollMemory'
-import { startProjectTransition } from '../utils/projectTransition'
 
 type StagePhase = 'idle' | 'stacked' | 'unfolding' | 'orbit'
 
@@ -33,13 +33,11 @@ export default function ProjectStage({ projects }: Props) {
   const phaseRef = useRef<StagePhase>('idle')
   const unfoldStartedAt = useRef(0)
   const hoverRef = useRef<number | null>(null)
-  const transitioningRef = useRef<number | null>(null)
   const hoverStrength = useRef<number[]>([])
   const pointer = useRef({ targetX: 0, targetY: 0, currentX: 0, currentY: 0 })
   const [phase, setPhase] = useState<StagePhase>('idle')
   const [entered, setEntered] = useState(false)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
-  const [transitioningIndex, setTransitioningIndex] = useState<number | null>(null)
   const [coverErrors, setCoverErrors] = useState<Record<string, boolean>>({})
 
   const setStagePhase = (next: StagePhase) => {
@@ -126,8 +124,6 @@ export default function ProjectStage({ projects }: Props) {
       hoverStrength.current[index] += (hoverTarget - hoverStrength.current[index]) * 0.095
       const hover = hoverStrength.current[index]
       const isBackgroundCard = hoverRef.current !== null && hoverRef.current !== index
-      const isTransitioning = transitioningRef.current !== null
-      const isOpening = transitioningRef.current === index
       const hoverInward = Math.sign(orbitX) * hover * 16
       const x = stackX + (orbitX - stackX) * reveal - hoverInward
       const y = stackY + (orbitY - stackY) * reveal - hover * 10
@@ -139,7 +135,7 @@ export default function ProjectStage({ projects }: Props) {
       card.style.transform = `translate(-50%, -50%) translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, ${z.toFixed(2)}px) scale(${scale.toFixed(3)}) rotateY(${rotation.toFixed(2)}deg)`
       const depthProgress = (orbitDepth + 1) / 2
       // 封面和文字分开处理：远处项目的图片降低存在感，但信息层始终可阅读。
-      card.style.opacity = String(clamp(isTransitioning ? (isOpening ? 0 : 0.16) : 1, 0, 1))
+      card.style.opacity = '1'
       card.style.filter = 'none'
       card.style.setProperty('--cover-opacity', String(clamp(0.58 + depthProgress * 0.42 + hover * 0.08, 0.58, 1)))
       card.style.setProperty('--cover-blur', `${(blur * (1 - hover)).toFixed(2)}px`)
@@ -235,29 +231,15 @@ export default function ProjectStage({ projects }: Props) {
     }).index
   }
 
-  const launchProject = (project: Project, index: number) => {
-    const card = cardRefs.current[index]
-    if (!card) return
-
+  const launchProject = (project: Project) => {
     rememberScrollFromCard()
-    transitioningRef.current = index
-    setTransitioningIndex(index)
-    updateHovered(null)
-    const started = startProjectTransition({
-      source: card,
-      cover: project.cover,
-      onNavigate: () => { window.location.hash = `/project/${project.slug}` },
-    })
-    if (!started) {
-      transitioningRef.current = null
-      setTransitioningIndex(null)
-    }
+    navigateHashRoute(`/project/${project.slug}`)
   }
 
-  const openProject = (event: ReactMouseEvent<HTMLAnchorElement>, project: Project, index: number) => {
+  const openProject = (event: ReactMouseEvent<HTMLAnchorElement>, project: Project) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
     event.preventDefault()
-    launchProject(project, index)
+    launchProject(project)
   }
 
   const handleStageClick = (event: ReactMouseEvent<HTMLDivElement>) => {
@@ -265,7 +247,7 @@ export default function ProjectStage({ projects }: Props) {
     const index = findVisibleCardIndex(event.clientX, event.clientY)
     if (index === null) return
     event.preventDefault()
-    launchProject(projects[index], index)
+    launchProject(projects[index])
   }
 
   if (projects.length === 0) return null
@@ -273,7 +255,7 @@ export default function ProjectStage({ projects }: Props) {
   return (
     <div
       ref={stageRef}
-      className={`project-stage is-${phase}${entered ? ' is-entered' : ''}${transitioningIndex !== null ? ' is-transitioning' : ''}`}
+      className={`project-stage is-${phase}${entered ? ' is-entered' : ''}`}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       onClick={handleStageClick}
@@ -293,12 +275,12 @@ export default function ProjectStage({ projects }: Props) {
               <a
                 key={project.slug}
                 ref={(node) => { cardRefs.current[index] = node }}
-                className={`stage-card stage-card--galaxy-${galaxyPosition}${isHovered ? ' is-hovered' : ''}${transitioningIndex === index ? ' is-opening' : ''}`}
+                className={`stage-card stage-card--galaxy-${galaxyPosition}${isHovered ? ' is-hovered' : ''}`}
                 href={`#/project/${project.slug}`}
                 aria-label={`查看 ${project.name}`}
                 data-tone={galaxyTone}
                 data-copy-layout={copyLayout}
-                onClick={(event) => openProject(event, project, index)}
+                onClick={(event) => openProject(event, project)}
                 onMouseEnter={() => updateHovered(index)}
                 onMouseLeave={() => updateHovered(null)}
                 onFocus={() => updateHovered(index)}

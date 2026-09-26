@@ -2,6 +2,7 @@ import Navbar from '../components/Navbar'
 import ProjectCard from '../components/ProjectCard'
 import Footer from '../components/Footer'
 import { projects } from '../data/projects'
+import { handleHashRouteClick } from '../utils/hashNavigation'
 
 // 全部项目页：展示 projects.json 中的每一个项目。
 // 数据驱动 —— 以后在 data/projects.json 中新增一条，这里与首页会同时自动出现，
@@ -18,7 +19,9 @@ export default function AllProjectsPage() {
           <div className="container">
             {/* Back to Home：左上角，醒目样式。与项目详情页的返回入口同款，
                 回到首页 Projects 区域（与导航栏 Projects 落点一致） */}
-            <a className="all-back" href="#/home">Back to Home</a>
+            <a className="all-back" href="#/home" onClick={(event) => handleHashRouteClick(event, '/home')}>
+              Back to Home
+            </a>
             <p className="sec-tag mono">03 / PROJECTS</p>
             <h1 className="sec-title">全部项目</h1>
             <p className="sec-desc">

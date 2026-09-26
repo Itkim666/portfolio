@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { MouseEvent } from 'react'
 import type { Project } from '../types'
 import GitHubIcon from './GitHubIcon'
+import { handleHashRouteClick } from '../utils/hashNavigation'
 import { rememberScrollFromCard } from '../utils/scrollMemory'
 
 // 卡片跟随鼠标的细微高光（--mx/--my 由 JS 写入，::before 消费）
@@ -35,10 +36,10 @@ export default function ProjectCard({ project }: { project: Project }) {
     return () => observer.disconnect()
   }, [])
 
-  // 在点击的那一刻记录位置：此时 DOM 还是列表页，
-  // 若等页面切到详情页再读 scrollY，浏览器已因内容高度变化夹紧过滚动值。
-  // 仅首页记录；从全部项目页进入时会清除，返回改为落到 Projects 区域。
-  const onClickCard = () => rememberScrollFromCard()
+  // 在列表页记录位置，再用客户端路由跳转，避免原生 hash 锚点平滑滚动。
+  const onClickCard = (event: MouseEvent<HTMLAnchorElement>) => {
+    handleHashRouteClick(event, `/project/${p.slug}`, rememberScrollFromCard)
+  }
 
   return (
     <article
