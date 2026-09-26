@@ -1,42 +1,5 @@
 [
   {
-    "slug": "self-improvement",
-    "name": "Self Improvement for Codex",
-    "description": "面向 Codex 的可移植长期经验库：把已验证的经验、Hook 规则与隐私过滤整理成可安装、可验证的开源项目。",
-    "cover": "projects/self-improvement/cover.svg",
-    "technologies": ["PowerShell", "Node.js", "Markdown", "JSON"],
-    "date": "2026-09",
-    "github": "https://github.com/Itkim666/self-improvement",
-    "demo": "",
-    "status": "Completed",
-    "tags": ["Codex", "Automation", "Tooling"],
-    "details": {
-      "background": "把真实使用中的 Codex 用户级 Self Improvement 配置整理成一个可发布、可脱敏、可移植的独立项目，让长期经验能够被分类保存，并在后续会话开始或提交新提示时注入相关上下文。",
-      "goals": "在保留真实能力边界的前提下，提供清晰的安装、验证和卸载流程；让经验库可复用、可维护，同时避免把个人历史知识、线程信息或凭据带进公开仓库。",
-      "features": [
-        "SessionStart、UserPromptSubmit 与 Stop 事件的 Hook 注册与调用",
-        "按错误、工具、项目、流程和经验路由知识模块，并在输出前进行隐私过滤",
-        "Pattern-Key 解析、重复清理与 INDEX 自动刷新",
-        "PowerShell 安装、卸载、安装验证与自动化配置验证脚本",
-        "提供 Codex-only 手动复盘触发词与可移植的规则、知识模块模板"
-      ],
-      "architecture": "hooks.json 负责事件接入，Node Hook 读取 INDEX.md、LEARNINGS.md、ERRORS.md、TOOLS.md、PROJECTS.md 与 WORKFLOWS.md 并完成路由和脱敏；PowerShell 脚本负责安装基线、校验与卸载恢复，规则模板与 Skill 文档独立存放。",
-      "process": "先从真实运行配置中提取已验证的 Hook、知识模块和安全边界，再移除个人运行时数据，补齐安装、验证、卸载与已知限制文档，最后用脚本检查发布包结构和隐私过滤行为。",
-      "problems": [
-        {
-          "problem": "经验库需要跨会话复用，但公开发布不能携带个人历史知识或认证信息。",
-          "solution": "将发布版整理为干净模板，Hook 输出前做敏感值过滤，个人知识只保留在本机运行时目录。"
-        },
-        {
-          "problem": "规则描述的目标能力容易被误认为本地脚本已经全部实现。",
-          "solution": "README 明确区分已实现能力、真实观察到的配置和仍依赖 Codex app 的边界，不夸大自动化范围。"
-        }
-      ],
-      "results": "一个可以独立发布和复用的 Codex 经验库项目：包含安装器、Hook、知识模板、验证脚本和安全边界文档，可从 GitHub 克隆后按说明部署。",
-      "screenshots": []
-    }
-  },
-  {
     "slug": "personal-website",
     "name": "Personal Website",
     "description": "一个把个人介绍、项目作品与技术文档放在一起的长期维护型个人网站。",
@@ -70,71 +33,6 @@
         }
       ],
       "results": "一个可以长期演进的个人站点骨架：加一个项目 = 建目录 + 写一段 JSON；背景动画在桌面端稳定满帧，移动端自动降级。",
-      "screenshots": []
-    }
-  },
-  {
-    "slug": "github-profile",
-    "name": "GitHub Profile",
-    "description": "个人 GitHub 主页仓库：用一份 README 汇总身份、方向与全部项目入口，作为整个作品集的索引页。",
-    "cover": "projects/github-profile/cover.svg",
-    "technologies": ["Markdown", "GitHub"],
-    "date": "2026-09",
-    "github": "https://github.com/Itkim666/Itkim666",
-    "demo": "",
-    "status": "In Progress",
-    "tags": ["Profile", "Documentation", "Index"],
-    "details": {
-      "background": "GitHub 主页仓库是别人点进头像后看到的第一页，也是整个作品集的索引。此前它只是一份占位 README——没有项目入口，也没有在线地址，已经做完的项目不会出现在这里，访问者看不到任何实际成果。",
-      "goals": "把主页 README 补齐成一份真正可用的索引：首屏看清身份与方向，往下能直接进入每一个已发布的项目和它的在线地址。只写能对上仓库的事实，不给星标数、下载量这类没有依据的数字留位置。",
-      "features": [
-        "首屏身份卡：姓名、专业方向（C/C++ · Web）与当前状态",
-        "项目索引：portfolio、self-improvement、website-design 各一句话定位 + 仓库直达链接",
-        "在线地址：已由 GitHub Pages 托管的个人站点直接给出可点击链接",
-        "学习计划：正在推进的计算机网络、MySQL 与工程实践方向",
-        "纯 Markdown 实现：不引入徽章服务、外部图片或构建流程，渲染结果在 GitHub 上稳定可控"
-      ],
-      "architecture": "仓库只有一份 README.md（默认分支 main），没有任何依赖或构建产物。内容按“身份 → 技术栈 → 项目索引 → 学习计划 → 联系方式”分段，项目索引逐条指向 Itkim666 名下的仓库；链接全部使用 Markdown 原生语法，因此不依赖任何外部服务。",
-      "process": "先把占位 README 替换为真实身份与方向，再逐个补充项目的定位说明和链接，最后逐条核对链接指向的仓库确实存在、且标注的主要语言与 GitHub 识别到的一致。",
-      "results": "主页从一份占位文本变成可用的个人索引入口：访问者在首屏即可知道我是谁、在做什么，并能直接进入每一个已发布的项目与其在线地址。",
-      "screenshots": []
-    }
-  },
-  {
-    "slug": "website-design",
-    "name": "website-design",
-    "description": "把可复用的网站母版整理成一个模板库 Skill，让 Codex 与 ZCode 可以共享同一套模板规则。",
-    "cover": "projects/website-design/cover.svg",
-    "technologies": ["TypeScript", "Markdown", "Python", "React", "Vite"],
-    "date": "2026-09",
-    "github": "https://github.com/Itkim666/website-design",
-    "demo": "",
-    "status": "Completed",
-    "tags": ["Skill", "Template", "Tooling"],
-    "details": {
-      "background": "在做个人作品集时把一套夜空视觉的网站做成了可复用的资产，但模板散落在各项目里、容易被就地改动而腐化，于是把它整理成一个模板库 Skill：一套规则 + 一个母版目录，让 Codex 和 ZCode 都能用同一份文件套用模板，不需要为每个 Agent 各维护一套。",
-      "goals": "1) 新增模板只需加目录 + 索引登记一行，不需要重新制作 Skill；2) 模板入口唯一，禁止硬编码模板 ID；3) templates/ 下的母版永远只读，用户改动只发生在副本；4) 结构可用脚本验证，避免索引与模板不一致。",
-      "features": [
-        "模板发现走唯一索引 config/templates.json，不硬编码模板 ID",
-        "模板套用流程：复制母版到 templates/ 之外 → 改副本的用户数据文件 → 构建验证后交付",
-        "保护规则：templates/ 下的原始模板只读，任何修改都发生在副本上",
-        "添加新模板：建 templates/template-0N/ + template.json + README.md → 索引加一行 → 运行验证",
-        "scripts/validate.py 结构校验：索引与模板一一对应、template_id 唯一、必填字段齐全、路径有效",
-        "同时面向 Codex 与 ZCode，全部使用 Markdown + JSON + 目录契约，无任何私有格式"
-      ],
-      "architecture": "SKILL.md 是规则核心（发现/选择/套用/添加/验证），AGENTS.md 是 Agent 入口，config/templates.json 是唯一索引，templates/<id>/ 存放只读母版（源码 + template.json + README.md），scripts/validate.py 负责结构校验。母版内部的用户数据进一步分离到 src/data/site.ts 与 data/projects.json，套用时只改数据文件。",
-      "process": "先定义 Skill 的规则与目录契约，再把已完成的个人作品集抽成 template-01（把姓名、简介、技能、项目、链接全部下沉到数据文件），最后写 validate 脚本并跑通，随后发布到 GitHub 以便克隆使用。",
-      "problems": [
-        {
-          "problem": "同一套模板要同时服务 Codex 和 ZCode，若各写一份定义就会各自演化、逐渐不一致。",
-          "solution": "不使用任何 Agent 私有格式，全部用 Markdown 文档 + JSON 索引 + 目录契约表达；两个 Agent 读同一套文件，因此新增模板不需要为任一 Agent 单独适配。"
-        },
-        {
-          "problem": "模板被直接在母版上修改，会导致母版腐化，之后套用出的新项目会带上上一次的改动。",
-          "solution": "在 SKILL.md 中立下保护规则（templates/ 只读，改动只发生在副本），并用 scripts/validate.py 校验索引与模板一一对应、template_id 唯一、必填字段齐全、路径有效，把结构性问题挡在提交之前。"
-        }
-      ],
-      "results": "结构验证通过（OK - skill structure valid, 1 template(s) registered: template-01）；template-01（Itkim Portfolio）已登记并完成母版与数据分离；Skill 已发布到 GitHub，克隆后放入对应 Agent 的目录即可使用。",
       "screenshots": []
     }
   }
