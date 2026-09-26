@@ -9,7 +9,7 @@
   --bg2: #0a1020;
   --text: #e8eef7;
   --muted: #93a0b4;
-  --faint: #64748b;
+  --faint: #7c8ca5;
   --acc: #5eead4;   /* 极光绿 */
   --acc2: #7dd3fc;  /* 青蓝 */
   --acc3: #a78bfa;  /* 紫 */
@@ -44,6 +44,13 @@ img { max-width: 100%; display: block; }
 a { color: var(--acc2); text-decoration: none; transition: color 0.2s; }
 a:hover { color: var(--acc); }
 button { font-family: inherit; cursor: pointer; }
+
+:where(a, button):focus-visible {
+  outline: 2px solid rgba(94, 234, 212, 0.9);
+  outline-offset: 4px;
+  border-radius: 6px;
+  box-shadow: 0 0 0 5px rgba(94, 234, 212, 0.1);
+}
 
 ::selection { background: rgba(94, 234, 212, 0.25); }
 
@@ -132,6 +139,7 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--acc2);
   transform: translateY(-1px);
 }
+.btn:active { transform: translateY(0) scale(0.985); }
 
 .status {
   font-size: 11.5px;
@@ -210,11 +218,16 @@ button { font-family: inherit; cursor: pointer; }
 
 .burger {
   display: none;
+  width: 44px;
+  height: 44px;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 5px;
   background: none;
   border: none;
-  padding: 6px;
+  padding: 0;
+  border-radius: 10px;
 }
 .burger span {
   width: 20px;
@@ -654,11 +667,17 @@ button { font-family: inherit; cursor: pointer; }
   gap: 24px;
   min-width: 0;
   overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: inline proximity;
+  scroll-padding-inline: 2px;
   padding: 2px 2px 12px;
   scrollbar-width: none;
 }
 .project-grid::-webkit-scrollbar { display: none; }
-.project-grid > .pcard { flex: 0 0 min(360px, 100%); }
+.project-grid > .pcard {
+  flex: 0 0 min(360px, 100%);
+  scroll-snap-align: start;
+}
 
 /* 卡片行包裹层：给“全部项目”按钮提供定位参照 */
 .pgrid-wrap {
@@ -1239,6 +1258,7 @@ body.is-project-cover-revealing .pd-footer-links { animation: project-detail-rev
   transform: translateX(2px);
 }
 .more-dots:hover span { background: var(--acc2); }
+.more-dots:active { transform: translateX(1px) scale(0.96); }
 
 /* 全部项目页：左上角返回首页 —— 醒目样式，一眼可见 */
 .all-back {
@@ -1256,7 +1276,20 @@ body.is-project-cover-revealing .pd-footer-links { animation: project-detail-rev
   transition: background 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.25s;
 }
 /* 本页没有 Hero，内容直接顶到页面顶部，需让出固定导航栏的高度 */
+.all-projects-main { min-height: calc(100svh - 84px); }
 .all-projects-page { padding-top: calc(var(--nav-h) + 46px); }
+.all-projects-page .project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  width: 100%;
+  max-width: none;
+  overflow: visible;
+  gap: 24px;
+}
+.all-projects-page .project-grid > .pcard {
+  width: 100%;
+  min-width: 0;
+}
 .all-back:hover {
   background: rgba(94, 234, 212, 0.18);
   border-color: rgba(94, 234, 212, 0.75);
@@ -1264,6 +1297,7 @@ body.is-project-cover-revealing .pd-footer-links { animation: project-detail-rev
   color: var(--acc);
   transform: translateY(-1px);
 }
+.all-back:active { transform: translateY(0) scale(0.985); }
 
 .pcard {
   position: relative;
@@ -1293,12 +1327,13 @@ body.is-project-cover-revealing .pd-footer-links { animation: project-detail-rev
   pointer-events: none;
   z-index: 2;
 }
-.pcard:hover::before { opacity: 1; }
-.pcard:hover {
+.pcard:is(:hover, :focus-within)::before { opacity: 1; }
+.pcard:is(:hover, :focus-within) {
   transform: translateY(-5px);
   border-color: rgba(125, 211, 252, 0.4);
   box-shadow: 0 14px 40px rgba(2, 6, 16, 0.6);
 }
+.pcard:active { transform: translateY(-2px) scale(0.992); }
 /* 边缘细微高光 */
 .pcard::after {
   content: "";
@@ -1315,7 +1350,7 @@ body.is-project-cover-revealing .pd-footer-links { animation: project-detail-rev
   pointer-events: none;
   z-index: 3;
 }
-.pcard:hover::after { opacity: 1; }
+.pcard:is(:hover, :focus-within)::after { opacity: 1; }
 
 .pcard-cover-link { display: block; }
 .pcard-cover {
@@ -1329,7 +1364,7 @@ body.is-project-cover-revealing .pd-footer-links { animation: project-detail-rev
   object-fit: cover;
   transition: transform 0.5s ease;
 }
-.pcard:hover .pcard-cover img { transform: scale(1.04) translateY(-2px); }
+.pcard:is(:hover, :focus-within) .pcard-cover img { transform: scale(1.04) translateY(-2px); }
 .cover-fallback {
   width: 100%;
   height: 100%;
@@ -1415,18 +1450,19 @@ body.is-project-cover-revealing .pd-footer-links { animation: project-detail-rev
   color: var(--text);
   transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
-.gh-card:hover {
+.gh-card:is(:hover, :focus-visible) {
   transform: translateY(-3px);
   border-color: rgba(167, 139, 250, 0.45);
   box-shadow: 0 12px 36px rgba(2, 6, 16, 0.55);
   color: var(--text);
 }
+.gh-card:active { transform: translateY(-1px) scale(0.992); }
 .gh-icon {
   color: var(--text);
   transition: transform 0.35s, color 0.35s;
   flex-shrink: 0;
 }
-.gh-card:hover .gh-icon { transform: rotate(-8deg) scale(1.08); color: var(--acc2); }
+.gh-card:is(:hover, :focus-visible) .gh-icon { transform: rotate(-8deg) scale(1.08); color: var(--acc2); }
 .gh-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .gh-user { font-size: 1.2rem; font-weight: 700; letter-spacing: 0.01em; }
 .gh-desc { color: var(--muted); font-size: 14px; }
@@ -1437,7 +1473,7 @@ body.is-project-cover-revealing .pd-footer-links { animation: project-detail-rev
   transition: color 0.3s, transform 0.3s;
   white-space: nowrap;
 }
-.gh-card:hover .gh-go { color: var(--acc); transform: translateX(3px); }
+.gh-card:is(:hover, :focus-visible) .gh-go { color: var(--acc); transform: translateX(3px); }
 
 /* ---------- Contact ---------- */
 .contact-box { text-align: center; padding: 30px 0 10px; }
@@ -1736,7 +1772,7 @@ body.is-project-cover-revealing .pd-footer-links { animation: project-detail-rev
   }
   .project-stage__orbit-line { width: 540px; opacity: 0.7; }
   .project-stage__caption { left: 22px; bottom: 17px; }
-  .project-grid { grid-template-columns: 1fr; }
+  .all-projects-page .project-grid { grid-template-columns: 1fr; }
   .gh-card { flex-direction: column; text-align: center; gap: 14px; padding: 28px 24px; }
   .gh-go { margin-left: 0; }
   .pd-shots { grid-template-columns: 1fr; }
@@ -1782,6 +1818,15 @@ body.is-project-cover-revealing .pd-footer-links { animation: project-detail-rev
   .project-stage .stage-card__cover { height: 61%; }
   .project-stage .stage-card__body { top: 61%; padding: 13px 15px 15px; }
   .project-stage__caption { bottom: 13px; left: 20px; }
+}
+
+@media (max-width: 960px) and (max-height: 640px) {
+  .hero {
+    min-height: auto;
+    padding-top: calc(var(--nav-h) + 36px);
+    padding-bottom: 48px;
+  }
+  .scroll-hint { display: none; }
 }
 
 /* ---------- 减少动态效果 ---------- */
