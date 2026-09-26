@@ -1,6 +1,6 @@
 import Section from './Section'
 import { projects } from '../data/projects'
-import ProjectStage from './ProjectStage'
+import ProjectCard from './ProjectCard'
 
 export default function ProjectsSection() {
   return (
@@ -8,8 +8,15 @@ export default function ProjectsSection() {
       <p className="sec-desc">
         挑几个我亲手做过、也从中学到东西的项目，点击卡片查看完整记录。
       </p>
-      <div className="project-stage-wrap">
-        <ProjectStage projects={projects} />
+      <div className="pgrid-wrap">
+        <div className="project-grid">
+          {projects.map((project) => (
+            <ProjectCard key={project.slug} project={project} />
+          ))}
+        </div>
+        <a className="more-dots" href="#/all-projects" aria-label="查看全部项目" title="全部项目">
+          <span /><span /><span />
+        </a>
       </div>
     </Section>
   )
